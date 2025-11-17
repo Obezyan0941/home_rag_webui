@@ -1,8 +1,5 @@
-import remarkGfm from 'remark-gfm';
-import ReactMarkdown from "react-markdown";
+import MarkdownRenderer from './MarkdownRenderer';
 import { useEffect, useRef, useState } from 'react';
-import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
-import {materialDark} from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import './Chat.css';
 import { ChatInput } from './ChatInput';
@@ -10,13 +7,6 @@ import { type Message } from '../scripts/api_calls';
 import { useLLMStream } from '../hooks/useLLMStream';
 
 
-interface CodeProps {
-  inline?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-  node?: any;
-  [key: string]: any;
-}
 
 const DEFAULT_MESSAGES: Message[] = [
   {
@@ -114,28 +104,7 @@ function Chat() {
       {messages.map((msg) => (
         <div key={msg.id} className={`message-container ${msg.role}`}>
           <div className={`message ${msg.role}`}>
-            <ReactMarkdown
-              children={msg.content}
-              remarkPlugins={[remarkGfm]}
-              components={{
-                code({node, inline, className, children, ...props}: CodeProps) {
-                  const match = /language-(\w+)/.exec(className || "")
-                  return !inline && match ? (
-                    <SyntaxHighlighter
-                      children={String(children).replace(/\n$/, "")}  
-                      style={materialDark}
-                      language={match[1]}
-                      PreTag="div"
-                      {...props}
-                    />
-                  ) : (
-                    <code className={className} {...props}>
-                      {children}
-                    </code>
-                  )
-                }
-              }}
-            />
+            <MarkdownRenderer content={msg.content} />
           </div>
         </div>
       ))}
