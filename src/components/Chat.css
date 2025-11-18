@@ -34,6 +34,15 @@
     margin-bottom: 10px;
 }
 
+.message-container:hover .message-button-option {
+  opacity: 1;
+}
+
+.message-items {
+    max-width: 80%;
+    position: relative;
+}
+
 .message-container.user {
     justify-content: flex-end;
 }
@@ -42,12 +51,13 @@
     justify-content: flex-start;
 }
 
+.message-options-container {
+    flex-direction: row;
+}
+
 .message {
-    max-width: 80%;
-    line-height: 1;
-    padding: 0px 20px;
+    padding: 1px 20px;
     border-radius: 25px;
-    position: relative;
     color: #2c2c2c;
     background-color: #e5e5ea;
 }
@@ -66,6 +76,29 @@
     border-color: crimson;
     padding: 0px 10px;
     color: black;
+}
+
+.message-button-option {
+    opacity: 0;
+    width: 2em;
+    aspect-ratio: 1 / 1;
+    margin:0;
+    padding: 0px 0px;
+    border-radius: 30pt;
+    background-color: #cfcfd600;
+    color: rgb(57, 57, 57);
+    
+    border: 1px solid transparent;
+    font-size: 1em;
+    font-weight: 0;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.message-button-option:hover {
+  background-color: #929297;
+  color: #ffe;
 }
 
 .input-container {
@@ -210,4 +243,8 @@ input {
 .dark-theme input {
     background-color: #333;
     color: white;
+}
+
+.dark-theme .message-button-option {
+    color: #e5e5ea;
 }

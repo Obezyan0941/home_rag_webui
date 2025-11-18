@@ -1,11 +1,11 @@
-import MarkdownRenderer from './MarkdownRenderer';
 import { useEffect, useRef, useState, useReducer } from 'react';
 
 import './Chat.css';
-import sendMessage from '../scripts/send_message';
 import { ChatInput } from './ChatInput';
-import type { Message, ChatAction, ChatState } from '../types/chatTypes';
+import sendMessage from '../scripts/send_message';
 import { useLLMStream } from '../hooks/useLLMStream';
+import ChatMessageContainer from "./ChatMessageContainer";
+import type { Message, ChatAction, ChatState } from '../types/chatTypes';
 
 
 const DEFAULT_MESSAGES: Message[] = [
@@ -119,11 +119,7 @@ function Chat() {
 
     <div className="messages">
       {chatState.messages.map((msg) => (
-        <div key={msg.id} className={`message-container ${msg.role}`}>
-          <div className={`message ${msg.role}`}>
-            <MarkdownRenderer content={msg.content} />
-          </div>
-        </div>
+        <ChatMessageContainer key={msg.id} message={msg}/>
       ))}
 
       {isTyping && (
