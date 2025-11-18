@@ -4,8 +4,10 @@ export interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
-  isDisabled?: boolean;
+  cancelStream: () => void;
+  isStreaming?: boolean;
   isTyping?: boolean;
+  isError?: boolean;
   placeholder?: string;
 }
 
@@ -13,14 +15,16 @@ export function ChatInput({
   value,
   onChange,
   onSubmit,
-  isDisabled = false,
+  cancelStream,
+  isStreaming = false,
   isTyping = false,
+  isError = false,
   placeholder = 'Type a message...'
 }: ChatInputProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isDisabled && value.trim()) {
+    if (!isStreaming && value.trim()) {
       onSubmit();
     }
   };
@@ -32,7 +36,7 @@ export function ChatInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        disabled={isDisabled}
+        disabled={isStreaming}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -41,10 +45,12 @@ export function ChatInput({
         }}
       />
 
-      {isTyping ? (
+      {isStreaming ? (
         <button
           type="button"
           className="button_stop"
+          onClick={cancelStream}
+          disabled={isTyping}
         >
           Stop
         </button>
@@ -52,10 +58,10 @@ export function ChatInput({
         <button
           type="submit"
           className="button"
-          disabled={isDisabled || !value.trim()}
-          aria-label={isDisabled ? "Generating response..." : "Send message"}
+          disabled={isStreaming || !value.trim() || isError}
+          aria-label={"Send message"}
         >
-          {isDisabled ? "Generating..." : "Send"}
+          Send
         </button>
       )}
     </form>

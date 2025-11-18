@@ -6,13 +6,6 @@ export interface ApiResponse {
 
 export type ChatMessageRole = 'user' | 'assistant' | 'system' | 'error';
 
-export interface Message {
-  id: string;
-  role: ChatMessageRole;
-  content: string;
-  timestamp: number;
-}
-
 export interface ChatMessage {
   role: ChatMessageRole;
   content: string;

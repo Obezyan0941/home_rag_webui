@@ -1,10 +1,10 @@
 import MarkdownRenderer from './MarkdownRenderer';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useReducer } from 'react';
 
 import './Chat.css';
 import sendMessage from '../scripts/send_message';
 import { ChatInput } from './ChatInput';
-import { type Message } from '../scripts/types';
+import type { Message, ChatAction, ChatState } from '../types/chatTypes';
 import { useLLMStream } from '../hooks/useLLMStream';
 
 
@@ -35,8 +35,67 @@ const DEFAULT_MESSAGES: Message[] = [
   },
 ];
 
+function chatReducer(state: ChatState, action: ChatAction) {
+  switch (action.type) {
+    case "ADD_USER_MESSAGE" : {
+      const userMessage: Message = {
+        id: Math.round(Math.random() * Math.random() * 10000).toString(),
+        role: "user",
+        content: action.payload.input,
+        timestamp: Date.now()
+      };
+      return {
+        ...state,
+        messages: [...state.messages, userMessage],
+        isError: false
+      };
+    }
+    case "ADD_ASSISTANT_MESSAGE" : {
+      const lastMessage = state.messages[state.messages.length - 1];
+
+      // if last message from assistant - assistant has already started replying, need to append token
+      if (lastMessage?.role !== 'assistant') {   
+        const assistantMessage: Message = {
+          id: Math.round(Math.random() * Math.random() * 10000).toString(),
+          role: 'assistant',
+          content: action.payload.token,
+          timestamp: Date.now(),
+        }
+        return {
+          ...state,
+          messages: [...state.messages, assistantMessage],
+          isError: false
+        };
+      // if there is no assistant message - assistant just started replying, need to create one 
+      } else {
+        return {
+          ...state,
+          messages: [...state.messages.slice(0, -1), { ...lastMessage, content: action.payload.token }],
+          isError: false
+        };
+      } 
+    }
+    case "ADD_ERROR_MESSAGE" : {
+      const error_msg: Message = {
+        id: Math.round(Math.random() * Math.random() * 10000).toString(),
+        role: "error",
+        content: action.payload.errorMsg,
+        timestamp: Date.now()
+      } 
+      return {
+        ...state,
+        messages: [...state.messages, error_msg],
+        isError: true
+      };
+    }
+    default: {
+      throw new Error(`Unhandled action type: ${(action as any).type}`);
+    }
+  }
+}
+
 function Chat() {
-  const [messages, setMessages] = useState<Message[]>(DEFAULT_MESSAGES);
+  const [chatState, chatDispatch] = useReducer(chatReducer, {messages: DEFAULT_MESSAGES, isError: false});
   const [input, setInput] = useState<string>("");
   const [isTyping, setisTyping] = useState<boolean>(false);
   const [darkTheme, setDarkTheme] = useState<boolean>(false);
@@ -47,9 +106,9 @@ function Chat() {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
   const sendMessagePartial = () => 
-    sendMessage(input, messages, setInput, setisTyping, setMessages, streamLLM);
+    sendMessage(input, chatState.messages, setInput, setisTyping, chatDispatch, streamLLM);
 
-  useEffect(scrollToBottom, [messages])
+  useEffect(scrollToBottom, [chatState.messages])
 
   return <div className={`chat-container ${darkTheme ? "dark-theme" : " "}`}>
     <div className='glassy-transparent'>
@@ -59,7 +118,7 @@ function Chat() {
     </div>
 
     <div className="messages">
-      {messages.map((msg) => (
+      {chatState.messages.map((msg) => (
         <div key={msg.id} className={`message-container ${msg.role}`}>
           <div className={`message ${msg.role}`}>
             <MarkdownRenderer content={msg.content} />
@@ -86,7 +145,9 @@ function Chat() {
       value={input}
       onChange={(e: string) => setInput(e)}
       onSubmit={sendMessagePartial}
-      isDisabled={isStreaming}
+      cancelStream={cancelStream}
+      isStreaming={isStreaming}
+      isError={chatState.isError}
       isTyping={isTyping}
     />
   </div>

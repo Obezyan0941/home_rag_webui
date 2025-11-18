@@ -1,5 +1,11 @@
 import React from 'react';
-import { type Message } from './types';
+import type {
+  Message,
+  ChatAction,
+  AddUserMessageAction,
+  AddAssistantMessageAction,
+  AddErrorMessageAction
+} from '../types/chatTypes';
 
 
 const sendMessage = async(
@@ -7,21 +13,20 @@ const sendMessage = async(
     messages: Message[],
     setInput: React.Dispatch<React.SetStateAction<string>>,
     setisTyping: React.Dispatch<React.SetStateAction<boolean>>,
-    setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
+    messagesDispatch: React.ActionDispatch<[action: ChatAction]>,
     streamLLM: (messages: Message[], onChunk: (text: string) => void) => Promise<void>
 ) => {
     if(!input.trim()) return;
     
-    const userMessage: Message = {
-        id: Math.round(Math.random() * Math.random() * 10000).toString(),
-        role: "user",
-        content: input,
-        timestamp: Date.now()
-    };
-
     setInput("");
     setisTyping(true);
-    setMessages(prev => [...prev, userMessage]);
+    const action: AddUserMessageAction = {
+      type: 'ADD_USER_MESSAGE',
+      payload: {
+        input: input
+      }
+    } 
+    messagesDispatch(action)
 
     let botContent = '';
     const onChunk = (delta: string) => {
@@ -29,31 +34,26 @@ const sendMessage = async(
       if (botContent) setisTyping(false);
       // throw new Error("Pizda");
       
-      setMessages(prev => {
-        const last = prev[prev.length - 1];
-        if (last?.role === 'assistant') {
-          return [...prev.slice(0, -1), { ...last, content: botContent }];
+      const action: AddAssistantMessageAction = {
+        type: 'ADD_ASSISTANT_MESSAGE',
+        payload: {
+          token: botContent
         }
-        return [...prev, {
-          id: Math.round(Math.random() * Math.random() * 10000).toString(),
-          role: 'assistant',
-          content: botContent,
-          timestamp: Date.now(),
-        }];
-      });
+      } 
+      messagesDispatch(action);
     };
 
     try {
       await streamLLM(messages, onChunk);
     } catch(error) {
       const error_text = error instanceof Error ? error.message : String(error)
-      const error_msg: Message = {
-        id: Math.round(Math.random() * Math.random() * 10000).toString(),
-        role: "error",
-        content: error_text,
-        timestamp: Date.now()
-      } 
-      setMessages(prev => [...prev, error_msg]);
+      const action: AddErrorMessageAction = {
+        type: 'ADD_ERROR_MESSAGE',
+        payload: {
+          errorMsg: error_text
+        }
+      }       
+      messagesDispatch(action);
       setisTyping(false);
       console.error(error);
     }

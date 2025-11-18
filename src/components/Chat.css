@@ -116,8 +116,16 @@ input {
     background-color: #0056b3;
 }
 
+.button:disabled {
+    background-color: #9e9ea1;
+}
+
 .button_stop:hover {
     background-color: #0056b3;
+}
+
+.button_stop:disabled {
+    background-color: #9e9ea1;
 }
 
 .typing-indicator {
