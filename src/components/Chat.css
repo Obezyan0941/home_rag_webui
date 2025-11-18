@@ -100,7 +100,23 @@ input {
     margin-left: 10px;
 }
 
+.button_stop {
+    border: none;
+    outline: none;
+    background-color: #007bff;
+    color: wheat;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
 .button:hover {
+    background-color: #0056b3;
+}
+
+.button_stop:hover {
     background-color: #0056b3;
 }
 

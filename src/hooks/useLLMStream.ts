@@ -2,9 +2,12 @@ import { useState, useRef, useCallback } from 'react';
 import {
   type Message,
   type OpenAIRequestInterface,
+} from '../scripts/types';
+import {
   type StreamOptions,
   OpenAIStreamRequest
 } from '../scripts/api_calls';
+
 
 
 export const useLLMStream = () => {

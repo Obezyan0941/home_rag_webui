@@ -40,14 +40,24 @@ export function ChatInput({
           }
         }}
       />
-      <button
-        type="submit"
-        className="button"
-        disabled={isDisabled || !value.trim()}
-        aria-label={isDisabled ? "Generating response..." : "Send message"}
-      >
-        {isDisabled ? "Generating..." : "Send"}
-      </button>
+
+      {isTyping ? (
+        <button
+          type="button"
+          className="button_stop"
+        >
+          Stop
+        </button>
+      ) : (
+        <button
+          type="submit"
+          className="button"
+          disabled={isDisabled || !value.trim()}
+          aria-label={isDisabled ? "Generating response..." : "Send message"}
+        >
+          {isDisabled ? "Generating..." : "Send"}
+        </button>
+      )}
     </form>
   );
 }
