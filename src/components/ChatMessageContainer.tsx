@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 import MarkdownRenderer from './MarkdownRenderer';
-import type { Message } from "../types/chatTypes"
+import type { Message, ChatAction, DeleteMessageAction } from "../types/chatTypes"
 
 export function RefreshOutline(props: SVGProps<SVGSVGElement>) {
   return (
@@ -44,9 +44,37 @@ export function TrashAltOutline(props: SVGProps<SVGSVGElement>) {
 
 interface ChatMessageContainerProps {
   message: Message;
+  chatDispatch: React.ActionDispatch<[action: ChatAction]>
+  setInput: (value: string) => void;
 }
 
-const ChatMessageContainer = ({ message }: ChatMessageContainerProps) => {
+const ChatMessageContainer = ({ 
+  message,
+  chatDispatch,
+  setInput,
+}: ChatMessageContainerProps) => {
+
+  const deleteMessage = (id: string) => {
+    const action: DeleteMessageAction = {
+      type: 'DELETE_MESSAGE',
+      payload: {
+        msg_id: id
+      }
+    }
+    chatDispatch(action);
+  }
+
+  const regeneratMessage = (id: string) => {
+    const action: DeleteMessageAction = {
+      type: 'DELETE_MESSAGE',
+      payload: {
+        msg_id: id
+      }
+    }
+    chatDispatch(action);
+    setInput("")
+  }
+
   return (
     <div className={`message-container ${message.role}`}>
       <div className='message-items'>      
@@ -55,12 +83,18 @@ const ChatMessageContainer = ({ message }: ChatMessageContainerProps) => {
         </div>
         <div className='message-options-container'>
         {
-          message.role === 'assistant' ? (
-            <button className='message-button-option'>
+          message.role === 'assistant' || message.role ===  'error' ? (
+            <button
+              className='message-button-option'
+              onClick={() => regeneratMessage(message.id)}
+            >
               <RefreshOutline />
             </button>
           ) : (
-            <button className='message-button-option'>
+            <button
+              className='message-button-option'
+              onClick={() => deleteMessage(message.id)}
+            >
               <TrashAltOutline />
             </button>
           )

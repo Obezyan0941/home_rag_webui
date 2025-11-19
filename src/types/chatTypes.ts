@@ -14,7 +14,7 @@ export interface ChatState {
 
 export interface AddUserMessageAction {
   type: 'ADD_USER_MESSAGE';
-  payload: { input: string };
+  payload: { input?: string, composed_message?: Message };
 }
 
 export interface AddAssistantMessageAction {
@@ -27,7 +27,13 @@ export interface AddErrorMessageAction {
   payload: { errorMsg: string };
 }
 
+export interface DeleteMessageAction {
+  type: 'DELETE_MESSAGE';
+  payload: { msg_id: string };
+}
+
 export type ChatAction = 
   | AddUserMessageAction
   | AddAssistantMessageAction
   | AddErrorMessageAction
+  | DeleteMessageAction

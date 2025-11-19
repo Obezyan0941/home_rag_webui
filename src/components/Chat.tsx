@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useReducer } from 'react';
 
 import './Chat.css';
 import { ChatInput } from './ChatInput';
-import sendMessage from '../scripts/send_message';
+import {sendMessages} from '../scripts/send_message';
 import { useLLMStream } from '../hooks/useLLMStream';
 import ChatMessageContainer from "./ChatMessageContainer";
 import type { Message, ChatAction, ChatState } from '../types/chatTypes';
@@ -38,12 +38,19 @@ const DEFAULT_MESSAGES: Message[] = [
 function chatReducer(state: ChatState, action: ChatAction) {
   switch (action.type) {
     case "ADD_USER_MESSAGE" : {
-      const userMessage: Message = {
-        id: Math.round(Math.random() * Math.random() * 10000).toString(),
-        role: "user",
-        content: action.payload.input,
-        timestamp: Date.now()
-      };
+      let userMessage: Message
+      if (action.payload.input && !action.payload.composed_message) {
+        userMessage = {
+          id: Math.round(Math.random() * Math.random() * 10000).toString(),
+          role: "user",
+          content: action.payload.input,
+          timestamp: Date.now()
+        }
+      } else if (action.payload.composed_message && !action.payload.input) {
+        userMessage = action.payload.composed_message
+      } else {
+        throw new Error(`Either string input or composed message should be included in ADD_USER_MESSAGE`);
+      }
       return {
         ...state,
         messages: [...state.messages, userMessage],
@@ -88,6 +95,18 @@ function chatReducer(state: ChatState, action: ChatAction) {
         isError: true
       };
     }
+    case "DELETE_MESSAGE" : {
+      for (let i = state.messages.length - 1; i >= 0; i--) {
+        if (state.messages[i].id === action.payload.msg_id) {
+          return {
+            ...state,
+            messages: [...state.messages.slice(0, i)],
+            isError: false
+          }
+        }
+      }
+      throw new Error(`id of message to delete does not match any message id from chat`);
+    }
     default: {
       throw new Error(`Unhandled action type: ${(action as any).type}`);
     }
@@ -105,10 +124,16 @@ function Chat() {
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
-  const sendMessagePartial = () => 
-    sendMessage(input, chatState.messages, setInput, setisTyping, chatDispatch, streamLLM);
+  useEffect(scrollToBottom, [chatState.messages]);
 
-  useEffect(scrollToBottom, [chatState.messages])
+  const last_message_role: string = chatState.messages[chatState.messages.length - 1]?.role
+  const requestLLM = () => {
+    if (last_message_role === 'user') {
+      sendMessages(chatState.messages, setisTyping, chatDispatch, streamLLM);
+    } else {
+    }
+  }
+  useEffect(requestLLM, [last_message_role]);
 
   return <div className={`chat-container ${darkTheme ? "dark-theme" : " "}`}>
     <div className='glassy-transparent'>
@@ -119,7 +144,12 @@ function Chat() {
 
     <div className="messages">
       {chatState.messages.map((msg) => (
-        <ChatMessageContainer key={msg.id} message={msg}/>
+        <ChatMessageContainer
+          key={msg.id}
+          message={msg}
+          chatDispatch={chatDispatch}
+          setInput={setInput}
+        />
       ))}
 
       {isTyping && (
@@ -140,7 +170,7 @@ function Chat() {
     <ChatInput
       value={input}
       onChange={(e: string) => setInput(e)}
-      onSubmit={sendMessagePartial}
+      messagesDispatch={chatDispatch}
       cancelStream={cancelStream}
       isStreaming={isStreaming}
       isError={chatState.isError}

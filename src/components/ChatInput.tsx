@@ -1,10 +1,11 @@
 import React from 'react';
+import type { ChatAction, AddUserMessageAction } from '../types/chatTypes';
 
 export interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
-  onSubmit: () => void;
   cancelStream: () => void;
+  messagesDispatch: React.ActionDispatch<[action: ChatAction]>
   isStreaming?: boolean;
   isTyping?: boolean;
   isError?: boolean;
@@ -14,7 +15,7 @@ export interface ChatInputProps {
 export function ChatInput({
   value,
   onChange,
-  onSubmit,
+  messagesDispatch,
   cancelStream,
   isStreaming = false,
   isTyping = false,
@@ -22,10 +23,21 @@ export function ChatInput({
   placeholder = 'Type a message...'
 }: ChatInputProps) {
 
+  const add_user_message = () => {
+    const action: AddUserMessageAction = {
+      type: 'ADD_USER_MESSAGE',
+      payload: {
+        input: value
+      }
+    } 
+    messagesDispatch(action)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isStreaming && value.trim()) {
-      onSubmit();
+      onChange("");
+      add_user_message();
     }
   };
 
