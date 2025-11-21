@@ -1,0 +1,64 @@
+import "./Sidebar.css"
+import logo from '/src/assets/logo.png'; 
+import { useState, useEffect } from "react";
+import { Sun, CrescentMoon, ChevronLeft, ChevronRight } from "./svg_icons";
+
+interface SidebarProps {
+  darkTheme: boolean;
+  setDarkTheme: (a: boolean) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
+  const [expanded, setExpanded] = useState(true);
+
+  const handleResize = () => {
+    if (window.innerWidth < 800) {
+      setExpanded(false);
+    } else {
+      setExpanded(true); 
+    }
+  };
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggle = () => setExpanded(prev => !prev);
+
+  return(
+    <div className="sidebar-container">
+      <aside className={`sidebar ${!expanded ? 'collapsed' : ''}`}>
+        <div className={`header-wrapper ${darkTheme ? ".dark-theme" : " "}`}>
+          <img src={logo} alt="Logo" width={100} height={55}/>
+          <div className="themeButton" onClick={() => setDarkTheme(!darkTheme)}>
+            {!darkTheme ? <Sun/> : <CrescentMoon/>}
+          </div>
+          <div
+            className="toggleSidebarButton"
+            onClick={toggle}
+            aria-expanded={expanded}
+            aria-label={expanded ? 'Collapse menu' : 'Show menu'}
+          >
+            {expanded ? <ChevronLeft/> : <ChevronRight/>}
+          </div>
+        </div>  
+      </aside>
+      {!expanded ?
+        <div className="show-sidebar-container">
+          <div
+            className="toggleSidebarButton"
+            onClick={toggle}
+            aria-expanded={expanded}
+            aria-label={'Show menu'}
+          >
+            <ChevronRight/>
+          </div>
+        </div> : <div></div>
+      }
+    </div>
+  )
+}
+
+export default Sidebar

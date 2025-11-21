@@ -113,13 +113,7 @@ function chatReducer(state: ChatState, action: ChatAction) {
   }
 }
 
-interface ChatProps {
-  darkTheme: boolean;
-}
-
-function Chat({
-  darkTheme = false
-}: ChatProps) {
+const Chat: React.FC = () => {
   const [chatState, chatDispatch] = useReducer(chatReducer, {messages: DEFAULT_MESSAGES, isError: false});
   const [input, setInput] = useState<string>("");
   const [isTyping, setisTyping] = useState<boolean>(false);

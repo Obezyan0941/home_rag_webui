@@ -1,19 +1,38 @@
-import "./Sidebar.css"
 import type { SVGProps } from 'react';
-import logo from '../assets/logo.png'; 
+
+export function ChevronRight(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 12 12"
+      width="2em"
+      height="2em"
+      {...props}
+    >
+      <path
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M4.15 9.85a.5.5 0 0 1 0-.707l3.15-3.15l-3.15-3.15a.5.5 0 0 1 .707-.707l3.5 3.5a.5.5 0 0 1 0 .707l-3.5 3.5a.5.5 0 0 1-.707 0z"
+        clipRule="evenodd"
+      ></path>
+    </svg>
+  )
+}
 
 export function ChevronLeft(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      width="4em"
-      height="4em"  
+      viewBox="0 0 12 12"
+      width="2em"
+      height="2em"
       {...props}
     >
       <path
         fill="currentColor"
-        d="M14.41 18.16L8.75 12.5l5.66-5.66l.7.71l-4.95 4.95l4.95 4.95z"
+        fillRule="evenodd"
+        d="M7.85 2.15a.5.5 0 0 1 0 .707L4.7 6.007l3.15 3.15a.5.5 0 0 1-.707.707l-3.5-3.5a.5.5 0 0 1 0-.707l3.5-3.5a.5.5 0 0 1 .707 0z"
+        clipRule="evenodd"
       ></path>
     </svg>
   )
@@ -292,27 +311,3 @@ export function CrescentMoon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
-
-interface SidebarProps {
-  darkTheme: boolean;
-  setDarkTheme: (a: boolean) => void;
-}
-
-function Sidebar({
-  darkTheme,
-  setDarkTheme
-}: SidebarProps) {
-  return <div className="sidebar">
-    <div className={`header-wrapper ${darkTheme ? ".dark-theme" : " "}`}>
-      <img src={logo} alt="Logo" width={100} height={55}/>
-      <button className="themeButton" onClick={() => setDarkTheme(!darkTheme)}>
-        {!darkTheme ? <Sun/> : <CrescentMoon/>}
-      </button>
-      <div className="closeSidebarButton">
-        <ChevronLeft/>
-      </div>
-    </div>  
-  </div>
-}
-
-export default Sidebar

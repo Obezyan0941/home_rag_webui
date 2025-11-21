@@ -5,6 +5,13 @@
   background-color: #f7f7f8;
 }
 
+@media (max-width: 768px) {
+  .app-container{
+      /* height: 100vh; */
+      height: 100dvh;
+  }
+}
+
 .dark-theme {
   background-color: #1e1e1e;
   color: #e0e0e0;

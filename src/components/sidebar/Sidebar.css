@@ -1,15 +1,28 @@
+.sidebar-container {
+  display: flex;
+}
+
 .sidebar {
   width: 260px;
   display: flex;
   flex-direction: column;
   background-color: #e2dfd8;
   justify-content: space-between;
+  opacity: 1;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sidebar.collapsed {
+  opacity: 0;
+  width: 0px;
+  pointer-events: none;
+  transform: translateX(-100px);
 }
 
 .header-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
   gap: .25rem;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -18,30 +31,36 @@
 .themeButton {
   background-color: #ffffff00;
   font-size: 2cap;
-  align-content: center;
+  align-items: center;
   border: 0px;
   cursor: pointer;
 }
 
-.closeSidebarButton {
+.toggleSidebarButton {
   cursor: pointer;
   color: #000000;
 }
 
-.closeSidebarButton:hover {
+.toggleSidebarButton:hover {
   color: #f3aa18;
+}
+
+.show-sidebar-container {
+  align-content: center;
+  margin: 10px;
+  position: absolute;
 }
 
 .dark-theme .sidebar {
   background-color: rgb(49, 49, 49);
 }
 
-.dark-theme .closeSidebarButton {
+.dark-theme .toggleSidebarButton {
   cursor: pointer;
   color: #e5e5ea;
 }
 
-.dark-theme .closeSidebarButton:hover {
+.dark-theme .toggleSidebarButton:hover {
   color: #f3aa18;
 }
 
