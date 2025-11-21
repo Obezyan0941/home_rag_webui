@@ -113,11 +113,16 @@ function chatReducer(state: ChatState, action: ChatAction) {
   }
 }
 
-function Chat() {
+interface ChatProps {
+  darkTheme: boolean;
+}
+
+function Chat({
+  darkTheme = false
+}: ChatProps) {
   const [chatState, chatDispatch] = useReducer(chatReducer, {messages: DEFAULT_MESSAGES, isError: false});
   const [input, setInput] = useState<string>("");
   const [isTyping, setisTyping] = useState<boolean>(false);
-  const [darkTheme, setDarkTheme] = useState<boolean>(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const { streamLLM, cancelStream, isStreaming } = useLLMStream();
 
@@ -135,12 +140,8 @@ function Chat() {
   }
   useEffect(requestLLM, [last_message_role]);
 
-  return <div className={`chat-container ${darkTheme ? "dark-theme" : " "}`}>
-    <div className='glassy-transparent'>
-      <button className="darkBtn" onClick={() => setDarkTheme(!darkTheme)}>
-        {!darkTheme ? "🌙 Dark" : "☀️ Light"}
-      </button>
-    </div>
+  return <div className="chat-container">
+    <div className='chat-top'></div>
 
     <div className="messages">
       {chatState.messages.map((msg) => (
