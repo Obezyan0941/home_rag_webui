@@ -2,10 +2,10 @@ import { useEffect, useRef, useState, useReducer } from 'react';
 
 import './Chat.css';
 import { ChatInput } from './ChatInput';
-import {sendMessages} from '../scripts/send_message';
-import { useLLMStream } from '../hooks/useLLMStream';
+import {sendMessages} from '../../scripts/send_message';
+import { useLLMStream } from '../../hooks/useLLMStream';
 import ChatMessageContainer from "./ChatMessageContainer";
-import type { Message, ChatAction, ChatState } from '../types/chatTypes';
+import type { Message, ChatAction, ChatState } from '../../types/chatTypes';
 
 
 const DEFAULT_MESSAGES: Message[] = [

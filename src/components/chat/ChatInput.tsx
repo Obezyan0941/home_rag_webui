@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ChatAction, AddUserMessageAction } from '../types/chatTypes';
+import type { ChatAction, AddUserMessageAction } from '../../types/chatTypes';
 
 export interface ChatInputProps {
   value: string;

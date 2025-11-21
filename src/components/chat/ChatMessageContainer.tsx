@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 import MarkdownRenderer from './MarkdownRenderer';
-import type { Message, ChatAction, DeleteMessageAction } from "../types/chatTypes"
+import type { Message, ChatAction, DeleteMessageAction } from "../../types/chatTypes"
 
 export function RefreshOutline(props: SVGProps<SVGSVGElement>) {
   return (
