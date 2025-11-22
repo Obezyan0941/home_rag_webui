@@ -44,6 +44,19 @@ const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
             {expanded ? <ChevronLeft/> : <ChevronRight/>}
           </div>
         </div>  
+
+        <div className="sidebar-middle-container">
+          <div className="new-chat-button">
+            New Chat
+          </div>
+          <div className="sidebar-line-break"/>
+          
+          <div className="chats-container">
+            
+          </div>
+        </div>
+        <div className="sidebar-bottom-container">
+        </div>
       </aside>
       {!expanded ?
         <div className="show-sidebar-container">
