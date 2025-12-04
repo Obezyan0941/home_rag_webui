@@ -1,48 +1,39 @@
 import React from 'react';
-import type { ChatAction, AddUserMessageAction } from '../../types/chatTypes';
 
 export interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
   cancelStream: () => void;
-  messagesDispatch: React.ActionDispatch<[action: ChatAction]>
+  onSubmit: (a: string) => void;
   isStreaming?: boolean;
   isTyping?: boolean;
   isError?: boolean;
   placeholder?: string;
+  prefix: string;
 }
 
 export function ChatInput({
   value,
   onChange,
-  messagesDispatch,
+  onSubmit,
   cancelStream,
   isStreaming = false,
   isTyping = false,
   isError = false,
-  placeholder = 'Type a message...'
+  placeholder = 'Type a message...',
+  prefix = ''
 }: ChatInputProps) {
-
-  const add_user_message = () => {
-    const action: AddUserMessageAction = {
-      type: 'ADD_USER_MESSAGE',
-      payload: {
-        input: value
-      }
-    } 
-    messagesDispatch(action)
-  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isStreaming && value.trim()) {
       onChange("");
-      add_user_message();
+      onSubmit(value);
     }
   };
 
   return (
-    <form className="input-container" onSubmit={handleSubmit}>
+    <form className={`input-container${prefix}`} onSubmit={handleSubmit}>
       <input
         type="text"
         value={value}

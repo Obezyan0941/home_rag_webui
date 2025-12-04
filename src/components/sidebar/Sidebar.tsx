@@ -2,6 +2,7 @@ import "./Sidebar.css"
 import logo from '/src/assets/logo.png'; 
 import { useState, useEffect } from "react";
 import { Sun, CrescentMoon, ChevronLeft, ChevronRight } from "./svg_icons";
+import { Link } from 'react-router-dom';
 
 interface SidebarProps {
   darkTheme: boolean;
@@ -47,7 +48,9 @@ const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
 
         <div className="sidebar-middle-container">
           <div className="new-chat-button">
-            New Chat
+            <Link to="/">
+              New Chat
+            </Link>
           </div>
           <div className="sidebar-line-break"/>
           

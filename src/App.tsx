@@ -1,16 +1,20 @@
 import './App.css'
-import Chat from './components/chat/Chat'
-import Sidebar from './components/sidebar/Sidebar'
+import ChatPage from './pages/Chat';
+import NewChatPage from './pages/NewChatPage';
 import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 const App: React.FC = () => {
   const [darkTheme, setDarkTheme] = useState<boolean>(false);
   
   return (
-  <div className={`app-container ${darkTheme ? "dark-theme" : " "}`}>
-    <Sidebar darkTheme={darkTheme} setDarkTheme={setDarkTheme}/>
-    <Chat/>
-  </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<NewChatPage darkThemeEnabled={darkTheme}/>} />
+        <Route path="/c/:id" element={<ChatPage darkThemeEnabled={darkTheme}/>} />
+        <Route path="*" element={<h1>Not found</h1>} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

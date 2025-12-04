@@ -38,7 +38,7 @@
 }
 
 .message-container:hover .message-button-option {
-opacity: 1;
+  opacity: 1;
 }
 
 .message-items {

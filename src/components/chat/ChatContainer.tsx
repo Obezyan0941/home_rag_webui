@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState, useReducer } from 'react';
 
-import './Chat.css';
+import './ChatContainer.css';
 import { ChatInput } from './ChatInput';
 import {sendMessages} from '../../scripts/send_message';
 import { useLLMStream } from '../../hooks/useLLMStream';
 import ChatMessageContainer from "./ChatMessageContainer";
-import type { Message, ChatAction, ChatState } from '../../types/chatTypes';
+import type {
+  Message,
+  ChatAction,
+  ChatState,
+  AddUserMessageAction
+} from '../../types/chatTypes';
 
 
 const DEFAULT_MESSAGES: Message[] = [
@@ -120,6 +125,16 @@ const Chat: React.FC = () => {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const { streamLLM, cancelStream, isStreaming } = useLLMStream();
 
+  const onInputSubmit = (value: string) => {
+    const action: AddUserMessageAction = {
+      type: 'ADD_USER_MESSAGE',
+      payload: {
+        input: value
+      }
+    } 
+    chatDispatch(action)
+  }
+
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
@@ -165,11 +180,12 @@ const Chat: React.FC = () => {
     <ChatInput
       value={input}
       onChange={(e: string) => setInput(e)}
-      messagesDispatch={chatDispatch}
+      onSubmit={onInputSubmit}
       cancelStream={cancelStream}
       isStreaming={isStreaming}
       isError={chatState.isError}
       isTyping={isTyping}
+      prefix=""
     />
   </div>
 }
