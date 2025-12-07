@@ -28,7 +28,7 @@ from backend_app.schemas.db_schemas import (
     SignupRequest,
     SigninRequest,
     SigninResponse,
-    ChatURL
+    ChatDetails
 )
 
 
@@ -153,15 +153,7 @@ async def signin(request: SigninRequest):
     
     user_chats = await db_manager.get_user_chats(user_id=str(existing_user.user_id))
     
-    chats_data: list[ChatURL] = []
-    for user_chat in user_chats:
-        chats_data.append(
-            ChatURL(
-                url=f"/c/{user_chat.chat_id}",
-                name=str(user_chat.chat_name) or "Untitled",
-                created_at=str(user_chat.created_at)
-            )
-        )
+    chats_data: list[ChatDetails] = [ChatDetails.model_validate(user_chat) for user_chat in user_chats]
     
     response = SigninResponse(
         success=True,

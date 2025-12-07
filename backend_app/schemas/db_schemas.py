@@ -1,5 +1,6 @@
 import time
-from pydantic import BaseModel, Field
+from datetime import datetime
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, Literal
 
 
@@ -14,14 +15,17 @@ class SigninRequest(BaseModel):
     return_chats: bool = True
     
 
-class ChatURL(BaseModel):
-    url: str
-    name: str
-    created_at: str
+class ChatDetails(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    chat_id: str
+    chat_name: str
+    created_at: datetime
+    last_message_at: datetime
 
 
 class SigninResponse(BaseModel):
     success: bool
-    chats: list[ChatURL]
+    chats: list[ChatDetails]
 
 

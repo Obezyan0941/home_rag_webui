@@ -1,0 +1,32 @@
+.chat-list-container {
+  padding: 16px 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-details {
+  height: 40px;
+  border-radius: 10px;
+  background-color: #f0f0f0b1;
+  color: #2c2c2c;
+  cursor: pointer;
+  margin: 4px 0px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+}
+
+.chat-details > a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+}
+
+.chat-details:hover {
+  background-color: rgb(240, 240, 240);
+}
