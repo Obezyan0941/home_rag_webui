@@ -37,11 +37,3 @@ export type ChatAction =
   | AddAssistantMessageAction
   | AddErrorMessageAction
   | DeleteMessageAction
-
-export interface ChatDetails {
-  chat_id: string;
-  chat_name: string;
-  created_at: string;
-  last_message_at: string;
-  chat_dump: string;
-}
