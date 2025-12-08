@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 interface SidebarProps {
   darkTheme: boolean;
-  setDarkTheme: (a: boolean) => void;
+  setDarkTheme: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
@@ -34,7 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
       <aside className={`sidebar ${!expanded ? 'collapsed' : ''}`}>
         <div className={`header-wrapper ${darkTheme ? ".dark-theme" : " "}`}>
           <img src={logo} alt="Logo" width={100} height={55}/>
-          <div className="themeButton" onClick={() => setDarkTheme(!darkTheme)}>
+          <div className="themeButton" onClick={() => setDarkTheme()}>
             {!darkTheme ? <Sun/> : <CrescentMoon/>}
           </div>
           <div
