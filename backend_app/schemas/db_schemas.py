@@ -24,7 +24,7 @@ class ChatDetails(BaseModel):
     last_message_at: datetime
 
 
-class SigninResponse(BaseModel):
+class SignInResponse(BaseModel):
     success: bool
     chats: list[ChatDetails]
 

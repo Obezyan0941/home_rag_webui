@@ -1,7 +1,9 @@
 import { 
   type OpenAIRequestInterface,
   type ChatCompletionResponse,
-  type ChatCompletionChunk
+  type ChatCompletionChunk,
+  type SignInRequestInterface,
+  type SignInResponse
  } from "./types";
 
 
@@ -133,5 +135,42 @@ export async function* OpenAIStreamRequest(
       throw new Error('Stream cancelled or timed out');
     }
     throw err;
+  }
+}
+
+export async function SignInRequest(request: SignInRequestInterface): Promise<SignInResponse> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  
+  const requestOptions: RequestInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(request),
+      signal: controller.signal,
+  };
+
+  try {
+      const response = await fetch(`http://localhost:1024/signin`, requestOptions);
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log(`HTTP ${response.status}: ${errorText}`);
+        request.redirect();
+      }
+
+      const data: SignInResponse = await response.json();
+      return data;
+  }
+      
+  catch (error) {
+    clearTimeout(timeoutId);
+    console.error(error);
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      throw new Error('Request timed out');
+    }
+    throw error;
   }
 }

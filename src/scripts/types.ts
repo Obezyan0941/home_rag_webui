@@ -1,3 +1,5 @@
+import { type ChatDetails } from "../types/appStateTypes";
+
 export interface ApiResponse {
     response_text: string;
     response_json: Record<string, unknown>;
@@ -63,4 +65,16 @@ export interface OpenAIRequestInterface {
   chat_completion_request: ChatCompletionRequest;
   openai_api_key?: string; 
   openai_base_url: string;
+}
+
+export interface SignInRequestInterface {
+  email: string;
+  password: string;
+  return_chats: boolean;
+  redirect: () => void;
+}
+
+export interface SignInResponse{
+  success: boolean
+  chats: ChatDetails[]
 }

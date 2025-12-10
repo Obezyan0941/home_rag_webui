@@ -27,7 +27,7 @@ from backend_app.schemas.openai_schemas import (
 from backend_app.schemas.db_schemas import (
     SignupRequest,
     SigninRequest,
-    SigninResponse,
+    SignInResponse,
     ChatDetails
 )
 
@@ -155,7 +155,7 @@ async def signin(request: SigninRequest):
     
     chats_data: list[ChatDetails] = [ChatDetails.model_validate(user_chat) for user_chat in user_chats]
     
-    response = SigninResponse(
+    response = SignInResponse(
         success=True,
         chats=chats_data
     )

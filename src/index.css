@@ -5,12 +5,35 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  /* background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* primary colors */
+  --color-bg: #f7f7f8;
+  --color-bg-secondary: #e2dfd8;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-border: #e0e0e0;
+
+  /* accent colors */
+  --color-primary: #eba415;
+  --color-primary-hover: #f9bd47;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+
+  --color-input-bg: #e2dfd8;
+}
+
+:root.dark {
+  --color-bg: #1e1e1e;
+  --color-bg-secondary: rgb(49, 49, 49);
+  --color-text: #f0f0f0;
+  --color-text-secondary: #a0a0a0;
+  --color-border: #333333;
+  --color-input-bg: #2d2d2d;
 }
 
 a {
@@ -33,4 +56,5 @@ body {
 h1 {
   font-size: 2.2em;
   line-height: 1.1;
+  color: var(--color-text);
 }

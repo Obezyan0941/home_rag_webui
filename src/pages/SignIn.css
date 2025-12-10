@@ -1,0 +1,55 @@
+.signin-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+}
+
+.signin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  background-color: var(--color-bg-secondary);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 8px;
+  margin: 8px;
+  width: 100%;
+  font-size: 16px;
+  border-radius: 16px;
+  color: var(--color-text);
+  text-align: center;
+  background-color: var(--color-bg);
+  box-sizing: border-box;
+}
+
+button {
+  font-size: 16px;
+  border-radius: 16px;
+  padding: 8px;
+  margin: 8px;
+  width: 100%;
+  color: var(--color-text);
+  border-color: #e2dfd800;
+  background-color: var(--color-primary);
+}
+
+button:hover {
+  background-color: var(--color-primary-hover);
+}
+
+body {
+  background-color: var(--color-bg);
+}
+
+.error-msg {
+  color: var(--color-error)
+}
