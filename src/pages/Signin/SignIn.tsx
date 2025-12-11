@@ -1,13 +1,15 @@
 import "./SignIn.css"
 import { useState } from "react";
-import { useLogin } from "../scripts/authorization";
-import Spinner from "../components/spinner_loading/Spinner";
+import { useLogin } from "../../scripts/authorization";
+import Spinner from "../../components/spinner_loading/Spinner";
 import { Link } from 'react-router-dom';
 import logo from '/src/assets/logo.png'; 
 import { useContext } from 'react';
-import { AppDispatchContext } from '../components/app_state/app_state';
-import { type SetChat } from "../types/appStateTypes";
+import { AppDispatchContext } from '../../components/app_state/app_state';
+import { type SetChat } from "../../types/appStateTypes";
 import { useNavigate } from 'react-router-dom';
+import { COOKIES } from "../../constants/constants";
+import { cookies } from "../../scripts/cookies";
 
 const SignInPage = () => {
   const { 
@@ -35,6 +37,8 @@ const SignInPage = () => {
           throw new Error('useAppDispatch must be used within AppDispatchProvider');
         }
         chatStateDispatch(action);
+        cookies.set(COOKIES.EMAIL, email)
+        cookies.set(COOKIES.PASSWORD, password)
         navigate('/', { replace: true });
       },
       onError: (err) => {

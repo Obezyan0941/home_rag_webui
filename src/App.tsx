@@ -15,7 +15,8 @@ import type {
 
 import { SignInRequest } from './scripts/authorization';
 import { type SignInResponse } from './scripts/types';
-import SignInPage from './pages/SignIn';
+import SignInPage from './pages/Signin/SignIn';
+import SignUpPage from './pages/Signup/SignUp';
 
 // const DEFAULT_CHATS: ChatDetails[] = [
 //   {
@@ -107,6 +108,7 @@ const App: React.FC = () => {
           <Route path="/" element={<NewChatPage darkThemeEnabled={darkTheme} setDarkTheme={toggleTheme}/>} />
           <Route path="/c/:id" element={<ChatPage darkThemeEnabled={darkTheme} setDarkTheme={toggleTheme}/>} />
           <Route path="/signin" element={<SignInPage/>} />
+          <Route path="/signup" element={<SignUpPage/>} />
           <Route path="*" element={<h1>Not found</h1>} />
         </Routes>
       </AppDispatchContext>

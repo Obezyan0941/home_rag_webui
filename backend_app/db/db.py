@@ -75,7 +75,7 @@ class DBManager:
             stmt = (
                 insert(Users).values(
                     user_id=user_id,
-                    created_at=str(datetime.now()),
+                    created_at=datetime.now(),
                     user_email=user_email,
                     password=password
                 )
