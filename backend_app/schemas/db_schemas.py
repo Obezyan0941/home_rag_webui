@@ -12,7 +12,6 @@ class SignupRequest(BaseModel):
 class SigninRequest(BaseModel):
     email: str
     password: str
-    return_chats: bool = True
     
 
 class ChatDetails(BaseModel):

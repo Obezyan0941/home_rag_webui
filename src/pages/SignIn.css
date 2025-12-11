@@ -1,5 +1,6 @@
 .signin-page-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100dvh;
@@ -14,6 +15,7 @@
   background-color: var(--color-bg-secondary);
   border-radius: 16px;
   padding: 24px;
+  margin: 24px;
 }
 
 input {
@@ -40,10 +42,23 @@ button {
   color: var(--color-text);
   border-color: #e2dfd800;
   background-color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 button:hover {
   background-color: var(--color-primary-hover);
+}
+
+button:disabled {
+  color: var(--color-text-secondary);
+  background-color: var(--color-disabled);
+}
+
+button:active {
+  color: var(--color-text-secondary);
+  background-color: var(--color-disabled);
 }
 
 body {

@@ -70,11 +70,13 @@ export interface OpenAIRequestInterface {
 export interface SignInRequestInterface {
   email: string;
   password: string;
-  return_chats: boolean;
-  redirect: () => void;
 }
 
-export interface SignInResponse{
+export interface SignInResponse {
   success: boolean
   chats: ChatDetails[]
+}
+
+export interface SignUpResponse {
+  success: boolean
 }

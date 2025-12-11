@@ -133,7 +133,7 @@ async def signup(request: SignupRequest):
         user_email=request.email,
         password=hashed_password
     )
-    return {"response": "user created"}
+    return {"success": True}
 
 
 @app.post("/signin")

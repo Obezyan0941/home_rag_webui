@@ -13,7 +13,7 @@ import type {
   AppAction
 } from './types/appStateTypes';
 
-import { SignInRequest } from './scripts/api_calls';
+import { SignInRequest } from './scripts/authorization';
 import { type SignInResponse } from './scripts/types';
 import SignInPage from './pages/SignIn';
 
@@ -48,10 +48,16 @@ function appReducer(state: AppState, action: AppAction) {
           return {
             ...state,
             chat_list: [...state.chat_list.splice(i, 1)],
-          }
+          };
         }
       }
       throw new Error(`id of chat to delete does not match any chat id from chat`);
+    }
+    case "SET_CHAT" : {
+      return {
+        ...state,
+        chat_list: action.payload.chat_list,
+      };
     }
     default: {
       throw new Error(`Unhandled action type: ${(action as any).type}`);
@@ -78,8 +84,6 @@ const App: React.FC = () => {
       const resp: SignInResponse = await SignInRequest({
         email: "",
         password: "",
-        return_chats: true,
-        redirect: () => navigate('/signin', { replace: true })
       })
       chat_list = resp.chats
     };
