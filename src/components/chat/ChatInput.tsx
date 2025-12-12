@@ -35,6 +35,7 @@ export function ChatInput({
   return (
     <form className={`input-container${prefix}`} onSubmit={handleSubmit}>
       <input
+        className="chat-input"
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -60,7 +61,7 @@ export function ChatInput({
       ) : (
         <button
           type="submit"
-          className="button"
+          className="button_submit"
           disabled={isStreaming || !value.trim() || isError}
           aria-label={"Send message"}
         >

@@ -100,8 +100,8 @@
 }
 
 .message-button-option:hover {
-background-color: #929297;
-color: #ffe;
+  background-color: #929297;
+  color: #ffe;
 }
 
 .input-container {
@@ -112,8 +112,7 @@ color: #ffe;
   border-bottom-right-radius: 10px;
 }
 
-input {
-  flex: 1;
+.chat-input {
   border: none;
   outline: none;
   padding: 10px;
@@ -123,7 +122,9 @@ input {
   background-color: #e2dfd8;
 }
 
-.button {
+.button_submit {
+  max-width: 60px;
+  max-height: 45px;
   border: none;
   outline: none;
   background-color: #d39314;
@@ -136,6 +137,8 @@ input {
 }
 
 .button_stop {
+  max-width: 60px;
+  max-height: 45px;
   border: none;
   outline: none;
   background-color: #d39314;
