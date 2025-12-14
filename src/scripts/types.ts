@@ -9,8 +9,10 @@ export interface ApiResponse {
 export type ChatMessageRole = 'user' | 'assistant' | 'system' | 'error';
 
 export interface ChatMessage {
+  id: string;
   role: ChatMessageRole;
   content: string;
+  created: number;
 }
 
 export interface ChatCompletionDelta {
@@ -51,6 +53,8 @@ export interface ChatCompletionResponse {
 export interface ChatCompletionRequest {
   model: string;
   messages: ChatMessage[];
+  chat_id: string;
+  user_id: string;
   max_tokens?: number;
   temperature?: number;
   top_p?: number;
@@ -75,8 +79,21 @@ export interface SignInRequestInterface {
 export interface SignInResponse {
   success: boolean
   chats: ChatDetails[]
+  user_id: string
 }
 
 export interface SignUpResponse {
   success: boolean
+  user_id: string
+}
+
+export interface SetChatRequestInterface {
+  user_id: string
+  chat_id: string
+  chat_dump: string
+}
+
+export interface GetChatRequestInterface {
+  user_id: string
+  chat_id: string
 }

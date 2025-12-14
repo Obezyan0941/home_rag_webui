@@ -4,12 +4,17 @@ export interface Message {
   id: string;
   role: ChatMessageRole;
   content: string;
-  timestamp: number;
+  created: number;
 }
 
 export interface ChatState {
   messages: Message[];
   isError: boolean;
+}
+
+export interface SetMessagesAction {
+  type: 'SET_MESSAGES';
+  payload: { messages: Message[] };
 }
 
 export interface AddUserMessageAction {
@@ -33,6 +38,7 @@ export interface DeleteMessageAction {
 }
 
 export type ChatAction = 
+  | SetMessagesAction
   | AddUserMessageAction
   | AddAssistantMessageAction
   | AddErrorMessageAction

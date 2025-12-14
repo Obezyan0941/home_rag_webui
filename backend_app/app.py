@@ -1,13 +1,14 @@
 import os
 import uuid
 import json
+import time
 import asyncio
+import random
 from typing import Any, AsyncGenerator
 from backend_app.utils.encrypt import encrypt, check_password
 
 from fastapi import FastAPI, HTTPException, status
 from contextlib import asynccontextmanager
-from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware  
 from starlette.responses import StreamingResponse
@@ -28,7 +29,11 @@ from backend_app.schemas.db_schemas import (
     SignupRequest,
     SigninRequest,
     SignInResponse,
-    ChatDetails
+    ChatDetails,
+    SetChatRequest,
+    SetChatResponse,
+    GetChatRequest,
+    GetChatResponse
 )
 
 
@@ -68,41 +73,75 @@ def list_models():
     return ModelsResponse(data=[ModelEntry(id="llm_title")])
 
 
-async def _resp_async(messages: list[ChatMessage]) -> str:
+async def _resp_async(
+        messages: list[ChatMessage],
+        user_id: str,
+        chat_id: str
+        ) -> str:
     response = ""
-    async for token in _resp_async_generator(messages=messages):
+    async for token in _resp_async_generator(
+        messages=messages,
+        user_id=user_id,
+        chat_id=chat_id
+        ):
         response += token
     return response
 
 
-async def _resp_async_generator(messages: list[ChatMessage]) -> AsyncGenerator[str, Any]:
-    i = 0
+async def temp_llm_async_generator(messages: list[ChatMessage]) -> AsyncGenerator[str, Any]:
     await asyncio.sleep(1)
     for token in "This is a temp message. If you see it, it means it works.".split(" "):
+        yield token + " "
+        await asyncio.sleep(0.1)
+
+async def _resp_async_generator(
+        messages: list[ChatMessage],
+        user_id: str,
+        chat_id: str
+        ) -> AsyncGenerator[str, Any]:
+    
+    new_messagee = ""
+    async for token in temp_llm_async_generator(messages=messages):
         chunk = ChatCompletionChunk(
-            id = i,
+            id = 0,
             object = "chat.completion.chunk",
             model = "llm_title",
             choices = [
                 ChatCompletionChunkChoice(
                     delta=ChatCompletionDelta(
                         role="assistant",
-                        content=token + " "
+                        content=token
                     )
                 )
             ]
         )
-        await asyncio.sleep(0.1)
+        new_messagee += token
         yield f"data: {json.dumps(chunk.model_dump())}\n\n"
-        i += 1
-
+    
+    messages.append(ChatMessage(
+        id=str(round(random.random() * random.random() * 10000)),
+        role="assistant",
+        content=new_messagee,
+        created=int(time.time())
+    ))
+    chat_dump = json.dumps([model.model_dump() for model in messages], indent=4)
+    await db_manager.set_user_chat(user_id=user_id, chat_id=chat_id, new_chat_dump=chat_dump)
+    
 
 @app.post("/chat/completions")
 async def chat_completions(request: ChatCompletionRequest):
     if request.stream:
-        return StreamingResponse(_resp_async_generator(request.messages), media_type="text/event-stream")
+        return StreamingResponse(_resp_async_generator(
+            messages=request.messages,
+            user_id=request.user_id,
+            chat_id=request.chat_id
+            ), media_type="text/event-stream")
     
-    resp_content = await _resp_async(request.messages)
+    resp_content = await _resp_async(
+        messages=request.messages,
+        user_id=request.user_id,
+        chat_id=request.chat_id
+        )
 
     model_name = request.model or "mock-model"
     response = ChatCompletionResponse(
@@ -110,7 +149,12 @@ async def chat_completions(request: ChatCompletionRequest):
         model=model_name,
         choices=[
             ChatCompletionChoice(
-                message=ChatMessage(role="assistant", content=resp_content)
+                message=ChatMessage(
+                    id=str(round(random.random() * random.random() * 10000)),
+                    role="assistant",
+                    content=resp_content,
+                    created=int(time.time())
+                )
             )
         ]
     )
@@ -128,13 +172,18 @@ async def signup(request: SignupRequest):
             detail="User with this email already exists"
         )
 
+    user_id = str(uuid.uuid4())
     await db_manager.create_user(
-        user_id=str(uuid.uuid4()),
+        user_id=user_id,
         user_email=request.email,
         password=hashed_password
     )
-    return {"success": True}
-
+    response = SignInResponse(
+        success=True,
+        chats=[],
+        user_id=user_id
+    )
+    return response
 
 @app.post("/signin")
 async def signin(request: SigninRequest):
@@ -157,14 +206,42 @@ async def signin(request: SigninRequest):
     
     response = SignInResponse(
         success=True,
-        chats=chats_data
+        chats=chats_data,
+        user_id=str(existing_user.user_id)
     )
     return response
 
 
-# @app.post("/c/{chat_id}/messages")
-# async def send_message(chat_id: str):
-#     return
+@app.post("/setchat")
+async def set_chat(request: SetChatRequest):
+    chat_data = await db_manager.set_user_chat(
+        user_id=request.user_id,
+        chat_id=request.chat_id,
+        new_chat_dump=request.chat_dump
+    )
+    return SetChatResponse(
+        success=True,
+        chat_id=str(chat_data.chat_id)
+    )
+
+
+@app.post("/getchat")
+async def get_chat(request: GetChatRequest):
+    chat_data = await db_manager.get_user_chat(
+        user_id=request.user_id,
+        chat_id=request.chat_id,
+    )
+    if chat_data:
+        success = True
+        chat_dump = str(chat_data.chat_dump)
+    else:
+        success = False
+        chat_dump = ""
+    return GetChatResponse(
+        success=success,
+        chat_dump=chat_dump
+    )
+
 
 app.mount(
     "/assets",

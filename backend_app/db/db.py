@@ -1,5 +1,5 @@
 import os
-import asyncio
+import uuid
 from datetime import datetime
 from backend_app import init_runtime
 from typing import Literal
@@ -7,7 +7,7 @@ from typing import Literal
 from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, select, insert
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, select, insert, and_
 
 
 init_runtime()
@@ -26,7 +26,7 @@ class Chats(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(String)
-    chat_id = Column(String)
+    chat_id = Column(String, unique=True)
     chat_name = Column(String)
     created_at = Column(DateTime(timezone=True))
     last_message_at = Column(DateTime(timezone=True))
@@ -103,4 +103,36 @@ class DBManager:
             )
         chats = list(result.scalars())
         return chats
-    
+            
+    async def get_user_chat(self, user_id: str, chat_id: str) -> Chats | None:
+        async with self.AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(Chats).where(and_(Chats.user_id == user_id, Chats.chat_id == chat_id))
+            )
+        chat = result.scalar_one_or_none()
+        return chat
+                
+    async def set_user_chat(self, user_id: str, chat_id: str, new_chat_dump: str) -> Chats:
+        async with self.AsyncSessionLocal() as session:
+            existing_chat = await self.get_user_chat(user_id, chat_id)
+
+            chat_to_process = None
+            if existing_chat:
+                chat_to_process = await session.merge(existing_chat)
+                chat_to_process.chat_dump = new_chat_dump           # type: ignore
+                chat_to_process.last_message_at = datetime.now()    # type: ignore
+            else:
+                chat_to_process = Chats(
+                    user_id=user_id,
+                    chat_id=str(uuid.uuid4()),
+                    chat_name="New Chat",
+                    chat_dump=new_chat_dump,
+                    last_message_at=datetime.now(),
+                    created_at=datetime.now(),
+                )
+                session.add(chat_to_process)
+
+            await session.commit()            
+            await session.refresh(chat_to_process)
+            return chat_to_process
+        

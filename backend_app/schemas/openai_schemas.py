@@ -6,7 +6,8 @@ from typing import Optional, Literal
 class ChatMessage(BaseModel):
     role: Literal["system", "user", "assistant", "tool"]
     content: str
-    name: Optional[str] = None
+    id: str
+    created: int
 
 
 class ChatCompletionChoice(BaseModel):
@@ -45,6 +46,8 @@ class ChatCompletionChunk(BaseModel):
 
 class ChatCompletionRequest(BaseModel):
     model: str = "mock-gpt-model"
+    chat_id: str
+    user_id: str
     messages: list[ChatMessage]
     max_tokens: Optional[int] = 512
     temperature: Optional[float] = 0.1

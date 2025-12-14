@@ -24,7 +24,29 @@ class ChatDetails(BaseModel):
 
 
 class SignInResponse(BaseModel):
+    user_id: str
     success: bool
     chats: list[ChatDetails]
+
+
+class SetChatRequest(BaseModel):
+    user_id: str
+    chat_id: str
+    chat_dump: str
+
+
+class SetChatResponse(BaseModel): 
+    success: bool
+    chat_id: str
+
+
+class GetChatRequest(BaseModel):
+    user_id: str
+    chat_id: str
+
+
+class GetChatResponse(BaseModel): 
+    success: bool
+    chat_dump: str
 
 

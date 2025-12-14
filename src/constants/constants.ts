@@ -3,5 +3,6 @@ export const TIMEOUT = 10000;
 export const COOKIES = {
   DARK_THEME: 'dark-theme',
   PASSWORD: 'green',
-  EMAIL: 'blue'
+  EMAIL: 'blue',
+  USER_ID: 'user_id'
 };

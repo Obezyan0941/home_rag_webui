@@ -37,9 +37,10 @@ const SignUpPage = () => {
       return;
     }
     Signup({ email, password }, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         cookies.set(COOKIES.EMAIL, email)
         cookies.set(COOKIES.PASSWORD, password)
+        cookies.set(COOKIES.USER_ID, data.user_id)
         navigate('/', { replace: true });
       },
       onError: (err) => {

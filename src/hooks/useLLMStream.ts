@@ -1,8 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
-import {
-  type Message,
-  type OpenAIRequestInterface,
-} from '../scripts/types';
+import type { Message } from '../types/chatTypes';
+import type { OpenAIRequestInterface } from '../scripts/types';
 import {
   type StreamOptions,
   OpenAIStreamRequest
@@ -15,7 +13,7 @@ export const useLLMStream = () => {
   const [isStreaming, setIsStreaming] = useState(false);
 
   const streamLLM = useCallback(
-    async (messages: Message[], onChunk: (text: string) => void) => {
+    async (messages: Message[], onChunk: (text: string) => void, chat_id: string, user_id: string) => {
       abortControllerRef.current?.abort();
       abortControllerRef.current = new AbortController();
 
@@ -24,15 +22,17 @@ export const useLLMStream = () => {
       try {
         const openai_request_body: OpenAIRequestInterface = {
           chat_completion_request: {
-              model: "temp_llm",
-              messages: messages,
-              stream: true
+            model: "temp_llm",
+            messages: messages,
+            chat_id: chat_id,
+            user_id: user_id,
+            stream: true
           },
-          openai_base_url: "http://localhost:1024"
+          openai_base_url: "http://localhost:1024",
         };
         const stream_options: StreamOptions = {
-            signal: abortControllerRef.current.signal,
-            timeoutMs: 60_000,
+          signal: abortControllerRef.current.signal,
+          timeoutMs: 60_000,
         };
 
         const generator = OpenAIStreamRequest(openai_request_body, stream_options);

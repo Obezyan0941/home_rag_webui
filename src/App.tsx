@@ -5,18 +5,19 @@ import { useState, useReducer, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { cookies } from './scripts/cookies';
 import { COOKIES } from './constants/constants';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { AppContext, AppDispatchContext } from './components/app_state/app_state';
 import type {
-  ChatDetails,
+  // ChatDetails,
   AppState,
   AppAction
 } from './types/appStateTypes';
 
-import { SignInRequest } from './scripts/authorization';
-import { type SignInResponse } from './scripts/types';
+// import { SignInRequest } from './scripts/authorization';
+// import { type SignInResponse } from './scripts/types';
 import SignInPage from './pages/Signin/SignIn';
 import SignUpPage from './pages/Signup/SignUp';
+import { useAuthCheck } from './hooks/useAuthCheck';
 
 // const DEFAULT_CHATS: ChatDetails[] = [
 //   {
@@ -67,34 +68,37 @@ function appReducer(state: AppState, action: AppAction) {
 }
 
 const App: React.FC = () => {
-  const email = cookies.get(COOKIES.EMAIL)
-  const password = cookies.get(COOKIES.PASSWORD)
-  const navigate = useNavigate();
+  const { chatList, error } = useAuthCheck();
+  if (error) console.log(error);
+  // const email = cookies.get(COOKIES.EMAIL)
+  // const password = cookies.get(COOKIES.PASSWORD)
+  // const user_id = cookies.get(COOKIES.USER_ID)
+  // const navigate = useNavigate();
 
-  const checkCredentials = ():boolean => {
-    if (!email || !password) {
-      navigate('/signin', { replace: true });
-      return false;
-    }
-    return true;
-  };
+  // const checkCredentials = ():boolean => {
+  //   if (!email || !password || !user_id) {
+  //     navigate('/signin', { replace: true });
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
-  let chat_list: ChatDetails[] = [];
-  useEffect(() => {
-    const fetchChats = async () => {
-      const resp: SignInResponse = await SignInRequest({
-        email: "",
-        password: "",
-      })
-      chat_list = resp.chats
-    };
+  // let chat_list: ChatDetails[] = [];
+  // useEffect(() => {
+  //   const fetchChats = async () => {
+  //     const resp: SignInResponse = await SignInRequest({
+  //       email: email,
+  //       password: password,
+  //     })
+  //     chat_list = resp.chats
+  //   };
     
-    if (checkCredentials()) {fetchChats();}    
-  }, []);
+  //   if (checkCredentials()) {fetchChats();}    
+  // }, []);
 
   const theme_value = true === cookies.get(COOKIES.DARK_THEME)
   const [darkTheme, setDarkTheme] = useState<boolean>(theme_value);
-  const [appState, appDispatch] = useReducer(appReducer, {chat_list: chat_list});
+  const [appState, appDispatch] = useReducer(appReducer, {chat_list: chatList});
 
   const toggleTheme = () => {
     setDarkTheme(!darkTheme)

@@ -19,7 +19,7 @@ const composeMessages = (
     id: Math.round(Math.random() * Math.random() * 10000).toString(),
     role: "user",
     content: input,
-    timestamp: Date.now()
+    created: Date.now()
   }
 
   const action: AddUserMessageAction = {
@@ -36,9 +36,11 @@ const composeMessages = (
 
 const sendMessages = async(
     messages: Message[],
+    chat_id: string,
+    user_id: string,
     setisTyping: React.Dispatch<React.SetStateAction<boolean>>,
     messagesDispatch: React.ActionDispatch<[action: ChatAction]>,
-    streamLLM: (messages: Message[], onChunk: (text: string) => void) => Promise<void>
+    streamLLM: (messages: Message[], onChunk: (text: string) => void, chat_id: string, user_id: string) => Promise<void>
 ) => {
   // console.log("Requesting llm"); 
   // for (let message of messages) {
@@ -62,7 +64,7 @@ const sendMessages = async(
   };
 
   try {
-    await streamLLM(messages, onChunk);
+    await streamLLM(messages, onChunk, chat_id, user_id);
   } catch(error) {
     const error_text = error instanceof Error ? error.message : String(error)
     const action: AddErrorMessageAction = {

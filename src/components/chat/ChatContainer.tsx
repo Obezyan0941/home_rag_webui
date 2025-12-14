@@ -5,12 +5,17 @@ import { ChatInput } from './ChatInput';
 import {sendMessages} from '../../scripts/send_message';
 import { useLLMStream } from '../../hooks/useLLMStream';
 import ChatMessageContainer from "./ChatMessageContainer";
+import { cookies } from '../../scripts/cookies';
+import { COOKIES } from '../../constants/constants';
+import { useNavigate } from 'react-router-dom';
 import type {
   Message,
   ChatAction,
   ChatState,
-  AddUserMessageAction
+  AddUserMessageAction,
+  SetMessagesAction
 } from '../../types/chatTypes';
+import { useGetChatRequest } from '../../scripts/user_requests';
 
 
 const DEFAULT_MESSAGES: Message[] = [
@@ -18,30 +23,37 @@ const DEFAULT_MESSAGES: Message[] = [
     id: Math.round(Math.random() * Math.random() * 10000).toString(),
     role: 'user',
     content: "Как открыть калькулятор?",
-    timestamp: Date.now()
+    created: Date.now()
   },
   {
     id: Math.round(Math.random() * Math.random() * 10000).toString(),
     role: 'assistant',
     content: "А никак нахуй",
-    timestamp: Date.now()
+    created: Date.now()
   },
   {
     id: Math.round(Math.random() * Math.random() * 10000).toString(),
     role: 'user',
     content: "Охуел?",
-    timestamp: Date.now()
+    created: Date.now()
   },
   {
     id: Math.round(Math.random() * Math.random() * 10000).toString(),
     role: 'assistant',
     content: "Thinking for 1m 1s\nНет.",
-    timestamp: Date.now()
+    created: Date.now()
   },
 ];
 
 function chatReducer(state: ChatState, action: ChatAction) {
   switch (action.type) {
+    case "SET_MESSAGES" : {
+      return {
+        ...state,
+        messages: action.payload.messages,
+        isError: false
+      };
+    }
     case "ADD_USER_MESSAGE" : {
       let userMessage: Message
       if (action.payload.input && !action.payload.composed_message) {
@@ -49,7 +61,7 @@ function chatReducer(state: ChatState, action: ChatAction) {
           id: Math.round(Math.random() * Math.random() * 10000).toString(),
           role: "user",
           content: action.payload.input,
-          timestamp: Date.now()
+          created: Date.now()
         }
       } else if (action.payload.composed_message && !action.payload.input) {
         userMessage = action.payload.composed_message
@@ -71,7 +83,7 @@ function chatReducer(state: ChatState, action: ChatAction) {
           id: Math.round(Math.random() * Math.random() * 10000).toString(),
           role: 'assistant',
           content: action.payload.token,
-          timestamp: Date.now(),
+          created: Date.now(),
         }
         return {
           ...state,
@@ -92,7 +104,7 @@ function chatReducer(state: ChatState, action: ChatAction) {
         id: Math.round(Math.random() * Math.random() * 10000).toString(),
         role: "error",
         content: action.payload.errorMsg,
-        timestamp: Date.now()
+        created: Date.now()
       } 
       return {
         ...state,
@@ -118,12 +130,57 @@ function chatReducer(state: ChatState, action: ChatAction) {
   }
 }
 
-const Chat: React.FC = () => {
-  const [chatState, chatDispatch] = useReducer(chatReducer, {messages: DEFAULT_MESSAGES, isError: false});
+interface ChatContainerProps {
+  chat_id: string;
+}
+
+const Chat: React.FC<ChatContainerProps> = ({ chat_id }) => {
+  const [chatState, chatDispatch] = useReducer(chatReducer, {messages: [], isError: false});
+  const setChatMessages = (messages: Message[]) => {
+    const action: SetMessagesAction = {
+      type: 'SET_MESSAGES',
+      payload: {
+        messages: messages
+      }
+    } 
+    chatDispatch(action)
+  };
+
+  const { 
+    mutate: getChat
+  } = useGetChatRequest();
+
+  useEffect(() => {
+      const user_id = cookies.get(COOKIES.USER_ID);
+      getChat(
+        {
+          user_id: user_id,
+          chat_id: chat_id, 
+        },
+        {
+          onSuccess: (data) => {
+            const chat_dump = data.chat_dump
+            const messages = JSON.parse(chat_dump) as Message[];
+            console.log(messages);
+            if (Array.isArray(messages)) {
+              setChatMessages(messages);
+            } else {
+              console.log("pizda");
+              throw new Error("messages object recieved is not an array");
+            }
+          },
+          onError: (err) => {
+            throw new Error(`Failed to get chat: ${err}`);
+          }
+        }
+      );
+    }, []);
+
   const [input, setInput] = useState<string>("");
   const [isTyping, setisTyping] = useState<boolean>(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const { streamLLM, cancelStream, isStreaming } = useLLMStream();
+  const navigate = useNavigate();
 
   const onInputSubmit = (value: string) => {
     const action: AddUserMessageAction = {
@@ -143,7 +200,11 @@ const Chat: React.FC = () => {
   const last_message_role: string = chatState.messages[chatState.messages.length - 1]?.role
   const requestLLM = () => {
     if (last_message_role === 'user') {
-      sendMessages(chatState.messages, setisTyping, chatDispatch, streamLLM);
+      const user_id = cookies.get(COOKIES.USER_ID)
+      if (typeof user_id !== "string") {
+        navigate('/signin', { replace: true });
+      }
+      sendMessages(chatState.messages, chat_id, user_id, setisTyping, chatDispatch, streamLLM);
     } else {
     }
   }
