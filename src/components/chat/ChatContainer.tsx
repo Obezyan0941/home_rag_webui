@@ -174,7 +174,7 @@ const Chat: React.FC<ChatContainerProps> = ({ chat_id }) => {
           }
         }
       );
-    }, []);
+    }, [chat_id]);
 
   const [input, setInput] = useState<string>("");
   const [isTyping, setisTyping] = useState<boolean>(false);
