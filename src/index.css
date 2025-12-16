@@ -28,7 +28,7 @@
   --color-input-bg: #e2dfd8;
 }
 
-:root.dark {
+:root .dark-theme  {
   --color-bg: #1e1e1e;
   --color-bg-secondary: rgb(49, 49, 49);
   --color-text: #f0f0f0;

@@ -1,7 +1,6 @@
 import './ChatsList.css'
 import ChatButton from './ChatButton';
 import { useContext } from 'react';
-// import type { ChatDetails } from '../../types/appStateTypes';
 import { AppContext } from '../app_state/app_state';
 
 const ChatsList = () => {

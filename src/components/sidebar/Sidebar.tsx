@@ -2,7 +2,13 @@ import "./Sidebar.css"
 import logo from '/src/assets/logo.png'; 
 import ChatsList from "./ChatsList";
 import { useState, useEffect } from "react";
-import { Sun, CrescentMoon, ChevronLeft, ChevronRight } from "./svg_icons";
+import {
+  Sun,
+  CrescentMoon,
+  ChevronLeft,
+  ChevronRight,
+  InterfaceEditWrite2ChangeDocumentEditModifyPaperPencilWriteWriting
+} from "./svg_icons";
 import { Link } from 'react-router-dom';
 
 interface SidebarProps {
@@ -49,6 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
 
         <div className="sidebar-middle-container">
           <div className="new-chat-button">
+            <InterfaceEditWrite2ChangeDocumentEditModifyPaperPencilWriteWriting/>
             <Link to="/">
               New Chat
             </Link>
@@ -56,9 +63,11 @@ const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
           <div className="sidebar-line-break"/>
           <ChatsList/>
           
-          {/* <div className="chats-container"></div> */}
         </div>
         <div className="sidebar-bottom-container">
+          <div className="logout-button">
+            Log Out
+          </div>
         </div>
       </aside>
       {!expanded ?

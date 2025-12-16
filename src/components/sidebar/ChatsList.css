@@ -5,28 +5,92 @@
 }
 
 .chat-details {
-  height: 40px;
+  height: 30px;
   border-radius: 10px;
-  background-color: #f0f0f0b1;
-  color: #2c2c2c;
+  color: var(--color-text);
   cursor: pointer;
   margin: 4px 0px;
 
   display: flex;
-  justify-content: center;
-  align-items: center;     
+  justify-content: space-between;
+  align-items: center;
+  
+  
+  position: relative;
 }
 
 .chat-details > a {
+  text-align: left;
   display: block;
-  width: 100%;
+  /* width: 100%; */
+  padding: 8px;
   height: 100%;
   color: inherit;
   display: flex;
   justify-content: center;
   align-items: center;     
+  cursor: pointer;
+}
+
+.chat-button-menu-icon {
+  padding: 8px;
+}
+
+.chat-details .chat-button-menu-icon {
+  opacity: 0; 
+  visibility: hidden; 
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+}
+
+.chat-details:hover .chat-button-menu-icon {
+  opacity: 1; 
+  visibility: visible; 
+}
+
+.dark-theme .chat-details:hover {
+  background-color: rgba(240, 240, 240, 0.295);
 }
 
 .chat-details:hover {
-  background-color: rgb(240, 240, 240);
+  background-color: rgba(116, 116, 116, 0.295);
+}
+
+.chat-button-tooltip {
+  z-index: 1000;
+
+  position: absolute;
+  left: 100%;
+  transform: translateY(17px);
+  background-color: rgb(216, 216, 216);
+  min-height: 30px;
+  color: white;
+  border-radius: 8px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.dark-theme .chat-button-tooltip {
+  background-color: rgb(87, 87, 87);;
+}
+
+.tooltip-button {
+  color: var(--color-text);
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  text-align: left;
+  flex-direction: row;
+  min-width: 80px;
+}
+
+.tooltip-button:hover {
+  background-color: rgb(173, 173, 173);
+}
+
+.dark-theme .tooltip-button:hover {
+  background-color: rgb(173, 173, 173);
+}
+
+.tooltip-button-icon {
+  padding-right: 4px;
 }
