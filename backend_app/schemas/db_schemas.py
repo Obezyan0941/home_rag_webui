@@ -38,6 +38,9 @@ class SetChatRequest(BaseModel):
 class SetChatResponse(BaseModel): 
     success: bool
     chat_id: str
+    chat_name: str
+    created_at: str
+    last_message_at: str
 
 
 class GetChatRequest(BaseModel):

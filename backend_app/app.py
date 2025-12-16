@@ -43,6 +43,7 @@ origins = [
     "http://127.0.0.1:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://192.168.0.119:5173"
 ]
 
 db_manager = DBManager()
@@ -221,7 +222,10 @@ async def set_chat(request: SetChatRequest):
     )
     return SetChatResponse(
         success=True,
-        chat_id=str(chat_data.chat_id)
+        chat_id=str(chat_data.chat_id),
+        chat_name=str(chat_data.chat_name),
+        created_at=str(chat_data.created_at),
+        last_message_at=str(chat_data.last_message_at)
     )
 
 

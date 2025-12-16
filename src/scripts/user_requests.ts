@@ -8,6 +8,9 @@ import { useMutation } from "@tanstack/react-query";
 export interface SetChatResponse {
   success: boolean;
   chat_id: string;
+  chat_name: string;
+  created_at: string;
+  last_message_at: string; 
 }
 
 export interface GetChatResponse {

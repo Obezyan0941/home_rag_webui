@@ -13,12 +13,16 @@ interface UseAuthCheckResult {
   userId: string | null; 
 }
 
-export const useAuthCheck = (): UseAuthCheckResult => {
-  const navigate = useNavigate();
+interface useAuthCheckInterface {
+  setChatList: (a: ChatDetails[]) => void;
+}
 
-  const [chatList, setChatList] = useState<ChatDetails[]>([]);
+export const useAuthCheck = ({setChatList}: useAuthCheckInterface): UseAuthCheckResult => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  let chatList: ChatDetails[] = [];
 
   useEffect(() => {
     const email = cookies.get(COOKIES.EMAIL);
@@ -40,7 +44,8 @@ export const useAuthCheck = (): UseAuthCheckResult => {
           email: emailString,
           password: passwordString,
         });
-        setChatList(resp.chats);
+        chatList = resp.chats;
+        setChatList(chatList);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch user data.');
       } finally {

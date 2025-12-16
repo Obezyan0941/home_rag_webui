@@ -1,11 +1,15 @@
 import "./NewChat.css"
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ChatInput } from "../chat/ChatInput";
 import { useNavigate } from 'react-router-dom';
 import { useSetChatRequest } from "../../scripts/user_requests";
 import { cookies } from "../../scripts/cookies";
 import { COOKIES } from "../../constants/constants";
 import type { Message } from "../../types/chatTypes";
+import { useContext } from 'react';
+import { AppDispatchContext } from '../app_state/app_state';
+import type { AddChat } from "../../types/appStateTypes";
+import type { ChatDetails } from "../../types/appStateTypes";
 
 const NewChat = () => {
   const [input, setInput] = useState<string>("");
@@ -18,6 +22,7 @@ const NewChat = () => {
     // error: setChatError 
   } = useSetChatRequest();
   const user_id = cookies.get(COOKIES.USER_ID);
+  const appStateDispatch = useContext(AppDispatchContext);
   
   const onSubmit = () => {
     if (typeof user_id === "string") {
@@ -36,10 +41,27 @@ const NewChat = () => {
         },
         {
           onSuccess: (data) => {
-            navigate('/c/'+data.chat_id , { replace: true });
+            const new_chat_data: ChatDetails = {
+              chat_id: data.chat_id,
+              chat_name: data.chat_name,
+              created_at: data.created_at,
+              last_message_at: data.last_message_at,
+              chat_dump: ""
+            }
+            console.log(`chat_name: ${data.chat_name}`)
+            const action: AddChat = {
+              type: "ADD_CHAT",
+              payload: new_chat_data
+            }
+            if (typeof appStateDispatch !== "undefined") {
+              appStateDispatch(action);
+              navigate('/c/'+data.chat_id , { replace: true });
+            } else {
+              console.error("app state is undefined");
+            }
           },
           onError: (err) => {
-            throw new Error(`Failed to set chat: ${err}`);
+            console.error(`Failed to set chat: ${err}`);
           }
         }
       );
@@ -47,11 +69,6 @@ const NewChat = () => {
     else {
       throw new Error(`invalid user id: ${user_id}`);
     }
-    // TODO: сначала делаем запрос на set_user_chat, при успехе получаем chat_id 
-    // и переходим по нему на страницу с чатом. На странице с чатом useEffect, который
-    // делает превичный запрос на чат. Другой useEffect видит, что последнее сообщение
-    // в чате было от пользователя, следовательно делает запрос.
-    // navigate('/c/' + crypto.randomUUID(), { replace: true });
   }
 
   return (
