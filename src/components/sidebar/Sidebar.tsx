@@ -10,6 +10,9 @@ import {
   InterfaceEditWrite2ChangeDocumentEditModifyPaperPencilWriteWriting
 } from "./svg_icons";
 import { Link } from 'react-router-dom';
+import { cookies } from "../../scripts/cookies";
+import { COOKIES } from "../../constants/constants";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   darkTheme: boolean;
@@ -17,6 +20,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(true);
 
   const handleResize = () => {
@@ -34,6 +38,14 @@ const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
   }, []);
 
   const toggle = () => setExpanded(prev => !prev);
+
+  const handleLogOut = () => {
+    cookies.set(COOKIES.USER_ID, "");
+    cookies.set(COOKIES.PASSWORD, "");
+    cookies.set(COOKIES.USER_ID, "");
+    cookies.set(COOKIES.DARK_THEME, "");
+    navigate('/signin', { replace: true });
+  }
 
   return(
     <div className="sidebar-container">
@@ -65,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ darkTheme, setDarkTheme }) => {
           
         </div>
         <div className="sidebar-bottom-container">
-          <div className="logout-button">
+          <div className="logout-button" onClick={handleLogOut}>
             Log Out
           </div>
         </div>
