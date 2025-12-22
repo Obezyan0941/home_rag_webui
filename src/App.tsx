@@ -43,15 +43,17 @@ function appReducer(state: AppState, action: AppAction) {
       };    
     }
     case "REMOVE_CHAT" : {
-      for (let i = state.chat_list.length - 1; i >= 0; i--) {
-        if (state.chat_list[i].chat_id === action.payload.chat_id) {
-          return {
-            ...state,
-            chat_list: [...state.chat_list.splice(i, 1)],
-          };
-        }
+      const chatIdToRemove = action.payload.chat_id;
+
+      const chatExists = state.chat_list.some(chat => chat.chat_id === chatIdToRemove);
+      if (!chatExists) {
+        throw new Error(`Chat with id ${chatIdToRemove} not found.`);
       }
-      throw new Error(`id of chat to delete does not match any chat id from chat`);
+
+      return {
+        ...state,
+        chat_list: state.chat_list.filter(chat => chat.chat_id !== chatIdToRemove),
+      };
     }
     case "SET_CHAT" : {
       return {

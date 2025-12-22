@@ -33,7 +33,9 @@ from backend_app.schemas.db_schemas import (
     SetChatRequest,
     SetChatResponse,
     GetChatRequest,
-    GetChatResponse
+    GetChatResponse,
+    DeleteChatRequest,
+    DeleteChatResponse
 )
 
 
@@ -226,6 +228,17 @@ async def set_chat(request: SetChatRequest):
         chat_name=str(chat_data.chat_name),
         created_at=str(chat_data.created_at),
         last_message_at=str(chat_data.last_message_at)
+    )
+
+
+@app.post("/delchat")
+async def delete_chat(request: DeleteChatRequest):
+    success = await db_manager.delete_user_chat(
+        user_id=request.user_id,
+        chat_id=request.chat_id,
+    )
+    return DeleteChatResponse(
+        success=success,
     )
 
 

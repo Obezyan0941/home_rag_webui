@@ -1,7 +1,9 @@
 import { fetchJson } from "./requests";
 import type {
     SetChatRequestInterface,
-    GetChatRequestInterface
+    GetChatRequestInterface,
+    DeleteChatRequestInterface,
+    DeleteChatResponseInterface
 } from "./types";
 import { useMutation } from "@tanstack/react-query";
 
@@ -63,6 +65,9 @@ export const useGetChatRequest = () => {
         },
     });
 };
+
+export const DeleteChatRequest = (data: DeleteChatRequestInterface) =>
+  fetchJson<DeleteChatRequestInterface, DeleteChatResponseInterface>('/delchat', 'POST', data);
 
 
 

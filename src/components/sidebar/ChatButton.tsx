@@ -1,10 +1,15 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import {
   DotsHorizontalOutline,
   BaselineDriveFileRenameOutline,
   BaselineDeleteForever
 } from './svg_icons';
+import { DeleteChatRequest } from '../../scripts/user_requests';
+import { cookies } from '../../scripts/cookies';
+import { COOKIES } from '../../constants/constants';
+import { AppDispatchContext } from '../app_state/app_state';
+import type { RemoveChat } from "../../types/appStateTypes";
 
 interface TooltipProps {
   isVisible: boolean;
@@ -35,6 +40,7 @@ const ChatButton = ({
   chat_name,
 }: ChatButtonProps) => {
   const [isTooltipVisible, setTooltipVisible] = useState(false);  
+  const appStateDispatch = useContext(AppDispatchContext);
   const chat_url = "/c/" + chat_id;
 
   const handleShowTooltip = () => {
@@ -44,6 +50,30 @@ const ChatButton = ({
   const handleHideTooltip = () => {
     setTooltipVisible(false);
   };
+
+  const handleDelete = () => {
+    console.log("current chat id: " + chat_id);
+    const user_id = cookies.get(COOKIES.USER_ID);
+    if (typeof user_id !== "string") {
+      console.error("Could not get user id from cookies");
+      return;
+    }
+    if (typeof appStateDispatch === "undefined") {
+      console.error("Unconsistent function call: appStateDispatch is undefined");
+      return;
+    }
+    const action: RemoveChat = {
+      type: "REMOVE_CHAT",
+      payload: {chat_id: chat_id}
+    }
+    try {
+      DeleteChatRequest({user_id: user_id, chat_id: chat_id});
+      appStateDispatch(action);
+    } catch (e) {
+      const err_msg = e instanceof(Error) ? e.message : ""
+      console.error("Could not request chat deletion. Error message: " + err_msg);
+    }
+  }
 
   return (
     <div className='chat-details' onMouseLeave={handleHideTooltip}>
@@ -56,7 +86,7 @@ const ChatButton = ({
           <BaselineDriveFileRenameOutline className='tooltip-button-icon'/>
           rename
         </div>
-        <div className='tooltip-button'>
+        <div className='tooltip-button' onClick={handleDelete}>
           <BaselineDeleteForever className='tooltip-button-icon'/>
           delete
         </div>

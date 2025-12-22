@@ -43,6 +43,15 @@ class SetChatResponse(BaseModel):
     last_message_at: str
 
 
+class DeleteChatRequest(BaseModel):
+    user_id: str
+    chat_id: str
+
+
+class DeleteChatResponse(BaseModel): 
+    success: bool
+
+
 class GetChatRequest(BaseModel):
     user_id: str
     chat_id: str

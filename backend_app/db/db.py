@@ -7,7 +7,7 @@ from typing import Literal
 from sqlalchemy.pool import NullPool
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, select, insert, and_
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, select, insert, and_, delete
 
 
 init_runtime()
@@ -135,4 +135,12 @@ class DBManager:
             await session.commit()            
             await session.refresh(chat_to_process)
             return chat_to_process
-        
+                    
+    async def delete_user_chat(self, user_id: str, chat_id: str) -> bool:
+        async with self.AsyncSessionLocal() as session:
+            stmt = delete(Chats).where(and_(Chats.user_id == user_id, Chats.chat_id == chat_id))
+
+            result = await session.execute(stmt)
+            await session.commit()
+            
+            return result.rowcount > 0  # type: ignore

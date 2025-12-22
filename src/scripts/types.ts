@@ -97,3 +97,12 @@ export interface GetChatRequestInterface {
   user_id: string
   chat_id: string
 }
+
+export interface DeleteChatRequestInterface {
+  user_id: string
+  chat_id: string
+}
+
+export interface DeleteChatResponseInterface {
+  success: boolean;
+}
