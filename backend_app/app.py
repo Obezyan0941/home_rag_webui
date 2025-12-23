@@ -8,6 +8,7 @@ from typing import Any, AsyncGenerator
 from backend_app.utils.encrypt import encrypt, check_password
 
 from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware  
@@ -35,7 +36,7 @@ from backend_app.schemas.db_schemas import (
     GetChatRequest,
     GetChatResponse,
     DeleteChatRequest,
-    DeleteChatResponse
+    EditChatRequest
 )
 
 
@@ -237,9 +238,33 @@ async def delete_chat(request: DeleteChatRequest):
         user_id=request.user_id,
         chat_id=request.chat_id,
     )
-    return DeleteChatResponse(
-        success=success,
+    message: dict[str, str | bool] = {"success": success}
+    if success:
+        return JSONResponse(message)
+    else:
+        message["message"] = "Could not find requested chat"
+        return JSONResponse(
+            content=message,
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@app.post("/editchat")
+async def edit_chat(request: EditChatRequest):
+    success = await db_manager.edit_chat_name(
+        user_id=request.user_id,
+        chat_id=request.chat_id,
+        new_chat_name=request.new_chat_name
     )
+    message: dict[str, str | bool] = {"success": success}
+    if success:
+        return JSONResponse(message)
+    else:
+        message["message"] = "Could not find requested chat"
+        return JSONResponse(
+            content=message,
+            status_code=status.HTTP_400_BAD_REQUEST
+        )
 
 
 @app.post("/getchat")

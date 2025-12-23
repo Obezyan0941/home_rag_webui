@@ -26,7 +26,14 @@ export interface SetChat {
   payload: {chat_list: ChatDetails[]};
 }
 
+export interface EditChat {
+  type: 'EDIT_CHAT';
+  payload: {chat_id: string, new_chat_name: string};
+}
+
 export type AppAction = 
   | AddChat
   | RemoveChat
   | SetChat
+  | EditChat
+  

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useReducer } from 'react';
+import { useEffect, useRef, useState, useReducer, useContext } from 'react';
 
 import './ChatContainer.css';
 import { ChatInput } from './ChatInput';
@@ -16,34 +16,8 @@ import type {
   SetMessagesAction
 } from '../../types/chatTypes';
 import { useGetChatRequest } from '../../scripts/user_requests';
-
-
-const DEFAULT_MESSAGES: Message[] = [
-  {
-    id: Math.round(Math.random() * Math.random() * 10000).toString(),
-    role: 'user',
-    content: "Как открыть калькулятор?",
-    created: Date.now()
-  },
-  {
-    id: Math.round(Math.random() * Math.random() * 10000).toString(),
-    role: 'assistant',
-    content: "А никак нахуй",
-    created: Date.now()
-  },
-  {
-    id: Math.round(Math.random() * Math.random() * 10000).toString(),
-    role: 'user',
-    content: "Охуел?",
-    created: Date.now()
-  },
-  {
-    id: Math.round(Math.random() * Math.random() * 10000).toString(),
-    role: 'assistant',
-    content: "Thinking for 1m 1s\nНет.",
-    created: Date.now()
-  },
-];
+import { AppContext } from '../app_state/app_state';
+import { checkChatIsActive } from '../../scripts/utils';
 
 function chatReducer(state: ChatState, action: ChatAction) {
   switch (action.type) {
@@ -136,6 +110,7 @@ interface ChatContainerProps {
 
 const Chat: React.FC<ChatContainerProps> = ({ chat_id }) => {
   const [chatState, chatDispatch] = useReducer(chatReducer, {messages: [], isError: false});
+  const appContext = useContext(AppContext);
   const setChatMessages = (messages: Message[]) => {
     const action: SetMessagesAction = {
       type: 'SET_MESSAGES',
@@ -195,7 +170,10 @@ const Chat: React.FC<ChatContainerProps> = ({ chat_id }) => {
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
+
+  if (!checkChatIsActive({chat_id: chat_id, chats: appContext.chat_list})) navigate('/', { replace: true });
   useEffect(scrollToBottom, [chatState.messages]);
+
 
   const last_message_role: string = chatState.messages[chatState.messages.length - 1]?.role
   const requestLLM = () => {

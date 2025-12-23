@@ -55,6 +55,31 @@ function appReducer(state: AppState, action: AppAction) {
         chat_list: state.chat_list.filter(chat => chat.chat_id !== chatIdToRemove),
       };
     }
+    case 'EDIT_CHAT' : {
+      const chatIdToEdit = action.payload.chat_id;
+      const chatNewName = action.payload.new_chat_name;
+      
+      const indexToEdit = state.chat_list.findIndex(chat => chat.chat_id === chatIdToEdit);
+
+      if (indexToEdit === -1) {
+        return state;
+      }
+
+      const updatedChatList = [
+        ...state.chat_list.slice(0, indexToEdit),
+        { 
+          ...state.chat_list[indexToEdit],
+          chat_name: chatNewName,
+        },
+        ...state.chat_list.slice(indexToEdit + 1),
+      ];
+
+      return {
+        ...state,
+        chat_list: updatedChatList,
+      };
+
+    }
     case "SET_CHAT" : {
       return {
         ...state,

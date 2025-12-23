@@ -48,8 +48,10 @@ class DeleteChatRequest(BaseModel):
     chat_id: str
 
 
-class DeleteChatResponse(BaseModel): 
-    success: bool
+class EditChatRequest(BaseModel):
+    user_id: str
+    chat_id: str
+    new_chat_name: str
 
 
 class GetChatRequest(BaseModel):

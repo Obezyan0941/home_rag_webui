@@ -103,6 +103,13 @@ export interface DeleteChatRequestInterface {
   chat_id: string
 }
 
-export interface DeleteChatResponseInterface {
+export interface EditChatRequestInterface {
+  user_id: string
+  chat_id: string
+  new_chat_name: string
+}
+
+export interface SuccessResponseInterface {
   success: boolean;
+  message?: string;
 }

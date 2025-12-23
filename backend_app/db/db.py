@@ -144,3 +144,18 @@ class DBManager:
             await session.commit()
             
             return result.rowcount > 0  # type: ignore
+                    
+    async def edit_chat_name(self, user_id: str, chat_id: str, new_chat_name: str) -> bool:
+        async with self.AsyncSessionLocal() as session:
+            result = await session.execute(
+                select(Chats).where(and_(Chats.user_id == user_id, Chats.chat_id == chat_id))
+            )
+            chat_to_edit = result.scalar_one_or_none()
+
+            if chat_to_edit:
+                chat_to_edit.chat_name = new_chat_name  # type: ignore
+                await session.commit()
+                return True
+            
+            return False
+        

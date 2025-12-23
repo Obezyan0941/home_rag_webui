@@ -5,6 +5,7 @@
 }
 
 .chat-details {
+  resize: none;
   height: 30px;
   border-radius: 10px;
   color: var(--color-text);
@@ -20,6 +21,8 @@
 }
 
 .chat-details > a {
+  overflow: hidden; 
+  white-space: nowrap; 
   text-align: left;
   display: block;
   /* width: 100%; */
@@ -93,4 +96,30 @@
 
 .tooltip-button-icon {
   padding-right: 4px;
+}
+
+.chat-button-form {
+  text-align: left;
+  display: block;
+  /* width: 100%; */
+  padding: 8px;
+  height: 100%;
+  color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.chat-button-input {
+  resize: none;
+  text-decoration: underline;
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 0px;
+}
+
+.dark-theme .chat-button-input {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 0px;
 }
