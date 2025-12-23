@@ -10,6 +10,7 @@ export interface Message {
 export interface ChatState {
   messages: Message[];
   isError: boolean;
+  chat_id: string;
 }
 
 export interface SetMessagesAction {

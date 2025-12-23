@@ -15,7 +15,7 @@ import type {
   AddUserMessageAction,
   SetMessagesAction
 } from '../../types/chatTypes';
-import { useGetChatRequest } from '../../scripts/user_requests';
+import { useGetChatRequest, SetChatRequest } from '../../scripts/user_requests';
 import { AppContext } from '../app_state/app_state';
 import { checkChatIsActive } from '../../scripts/utils';
 
@@ -89,6 +89,22 @@ function chatReducer(state: ChatState, action: ChatAction) {
     case "DELETE_MESSAGE" : {
       for (let i = state.messages.length - 1; i >= 0; i--) {
         if (state.messages[i].id === action.payload.msg_id) {
+          const new_messages = [...state.messages.slice(0, i)]
+          if (new_messages.length === 0) return {...state}
+          if (new_messages[new_messages.length - 1].role === "assistant") {
+            const user_id = cookies.get(COOKIES.USER_ID);
+            if (typeof user_id !== "string") {
+              console.error("Inconsistent function call: user_id is not a string. user_id: " + user_id);
+              return {...state}
+            }
+            const chat_dump = JSON.stringify(new_messages);
+            SetChatRequest({user_id: user_id, chat_id: state.chat_id, chat_dump: chat_dump});
+            return {
+              ...state,
+              messages: new_messages,
+              isError: false
+            }
+          }
           return {
             ...state,
             messages: [...state.messages.slice(0, i)],
@@ -96,7 +112,8 @@ function chatReducer(state: ChatState, action: ChatAction) {
           }
         }
       }
-      throw new Error(`id of message to delete does not match any message id from chat`);
+      console.error("Could not find message by id: " + action.payload.msg_id)
+      return {...state}
     }
     default: {
       throw new Error(`Unhandled action type: ${(action as any).type}`);
@@ -109,7 +126,7 @@ interface ChatContainerProps {
 }
 
 const Chat: React.FC<ChatContainerProps> = ({ chat_id }) => {
-  const [chatState, chatDispatch] = useReducer(chatReducer, {messages: [], isError: false});
+  const [chatState, chatDispatch] = useReducer(chatReducer, {messages: [], isError: false, chat_id: chat_id});
   const appContext = useContext(AppContext);
   const setChatMessages = (messages: Message[]) => {
     const action: SetMessagesAction = {
@@ -140,7 +157,6 @@ const Chat: React.FC<ChatContainerProps> = ({ chat_id }) => {
             if (Array.isArray(messages)) {
               setChatMessages(messages);
             } else {
-              console.log("pizda");
               throw new Error("messages object recieved is not an array");
             }
           },
@@ -173,7 +189,6 @@ const Chat: React.FC<ChatContainerProps> = ({ chat_id }) => {
 
   if (!checkChatIsActive({chat_id: chat_id, chats: appContext.chat_list})) navigate('/', { replace: true });
   useEffect(scrollToBottom, [chatState.messages]);
-
 
   const last_message_role: string = chatState.messages[chatState.messages.length - 1]?.role
   const requestLLM = () => {
