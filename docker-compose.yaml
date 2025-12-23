@@ -1,0 +1,9 @@
+services:
+  homerag-webui:
+    container_name: homerag-webui
+    build: .
+    ports:
+      - "1024:1024"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
