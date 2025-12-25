@@ -2,8 +2,14 @@ services:
   homerag-webui:
     container_name: homerag-webui
     build: .
+    environment:
+      - LLM_HOST=http://172.22.144.1:11434/v1
+      - MODEL_NAME=qwen2.5:3b
+      - LLM_TOKEN=
+      - DEBUG=false
     ports:
       - "1024:1024"
     volumes:
       - ./data:/app/data
+      - ./backend_app:/app/backend_app
     restart: unless-stopped

@@ -16,6 +16,17 @@ class DBConfig(BaseSettings):
     qdrant_host: str = Field(validation_alias='QDRANT_HOST', default="localhost:6333")
 
 
+class LLMConfig(BaseSettings):
+    llm_host: str = Field(validation_alias='LLM_HOST')
+    model_name: str = Field(validation_alias='MODEL_NAME')
+    llm_temperature: float = Field(validation_alias='LLM_TEMPERATURE', default=0.7, gt=0, lt=1)
+    llm_token: str = Field(validation_alias='LLM_TOKEN', default="")
+
+
+class AppConfig(BaseSettings):
+    debug: bool = Field(validation_alias="DEBUG", default=False)
+
+
 def init_runtime() -> None:
     # if os.path.exists('/run/secrets/secrets.txt'):
     #     secret_path = '/run/secrets/secrets.txt'
@@ -35,4 +46,6 @@ def init_runtime() -> None:
 
 init_runtime()
 config = DBConfig()
+llm_config = LLMConfig()   # type: ignore
+app_config = AppConfig()
 logger = init_logger()

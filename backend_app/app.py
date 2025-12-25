@@ -4,17 +4,20 @@ import json
 import time
 import asyncio
 import random
-from typing import Any, AsyncGenerator
-from backend_app.utils.encrypt import encrypt, check_password
+from typing import Any, AsyncGenerator, Callable
 
 from fastapi import FastAPI, HTTPException, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware  
 from starlette.responses import StreamingResponse
 
+from backend_app import app_config
+from backend_app.llm import LLMProxy, LangChainMessages
 from backend_app.db.db import DBManager
+from backend_app.utils.encrypt import encrypt, check_password
+
 from backend_app.schemas.openai_schemas import (
     ModelEntry,
     ChatMessage,
@@ -40,16 +43,46 @@ from backend_app.schemas.db_schemas import (
 )
 
 
+TokenGeneratorFn = Callable[
+    [list[ChatMessage]],
+    AsyncGenerator[str, Any],
+]
+
 FRONTEND_DIR = "dist"
+INDEX_HTML = FRONTEND_DIR + "/index.html"
 origins = [
-    "http://localhost:3000",
+    "http://localhost:1024",
     "http://127.0.0.1:3000",
+    "http://127.0.0.1:1024",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://192.168.0.119:5173"
 ]
 
 db_manager = DBManager()
+llm_proxy = LLMProxy()
+
+
+async def request_llm(messages: list[ChatMessage]) -> AsyncGenerator[str, Any]:
+    messages_lang = [LangChainMessages.from_openai_dict(message=message) for message in messages]
+    async for token in llm_proxy.stream_chat(messages=messages_lang):
+        yield token
+
+
+
+async def temp_llm_async_generator(messages: list[ChatMessage]) -> AsyncGenerator[str, Any]:
+    await asyncio.sleep(1)
+    for token in "This is a temp message. If you see it, it means it works.".split(" "):
+        yield token + " "
+        await asyncio.sleep(0.1)
+
+if app_config.debug:
+    print(f"Running in debug mode")
+    token_generator_fn: TokenGeneratorFn = temp_llm_async_generator
+else:
+    print(f"Running in production mode")
+    token_generator_fn: TokenGeneratorFn = request_llm
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -92,12 +125,6 @@ async def _resp_async(
     return response
 
 
-async def temp_llm_async_generator(messages: list[ChatMessage]) -> AsyncGenerator[str, Any]:
-    await asyncio.sleep(1)
-    for token in "This is a temp message. If you see it, it means it works.".split(" "):
-        yield token + " "
-        await asyncio.sleep(0.1)
-
 async def _resp_async_generator(
         messages: list[ChatMessage],
         user_id: str,
@@ -105,7 +132,8 @@ async def _resp_async_generator(
         ) -> AsyncGenerator[str, Any]:
     
     new_messagee = ""
-    async for token in temp_llm_async_generator(messages=messages):
+
+    async for token in token_generator_fn(messages):
         chunk = ChatCompletionChunk(
             id = 0,
             object = "chat.completion.chunk",
@@ -291,15 +319,7 @@ app.mount(
     name="assets"
 )
 
-app.mount(
-    "/",
-    StaticFiles(directory=FRONTEND_DIR, html=True),
-    name="spa"
-)
-
-# @app.get("/{full_path:path}")
-# async def serve_spa(full_path: str):
-#     if os.path.exists(os.path.join(FRONTEND_DIR, full_path)):
-#         return FileResponse(os.path.join(FRONTEND_DIR, full_path))
-#     return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+@app.get("/{path:path}")
+async def spa(path: str):
+    return FileResponse(INDEX_HTML)
 
