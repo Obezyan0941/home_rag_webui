@@ -48,7 +48,9 @@ const ChatMessageContainer = ({
   const [fixedMessage, setFixedMessage] = useState(message.content);
 
   useEffect(() => {
+    // State copying in order to change state independently for user input
     setFixedMessage(message.content);
+    setEditedMessage(message.content);
   }, [message.content])
 
   const deleteMessage = (id: string) => {
