@@ -5,7 +5,7 @@ import {
   BaselineDriveFileRenameOutline,
   BaselineDeleteForever,
   Check
-} from './svg_icons';
+} from '../../constants/svg_icons';
 import { DeleteChatRequest, EditChatRequest } from '../../scripts/user_requests';
 import { cookies } from '../../scripts/cookies';
 import { COOKIES } from '../../constants/constants';

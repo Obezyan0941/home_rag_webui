@@ -8,7 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   InterfaceEditWrite2ChangeDocumentEditModifyPaperPencilWriteWriting
-} from "./svg_icons";
+} from "../../constants/svg_icons";
 import { Link } from 'react-router-dom';
 import { cookies } from "../../scripts/cookies";
 import { COOKIES } from "../../constants/constants";

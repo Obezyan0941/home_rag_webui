@@ -156,7 +156,7 @@ async def _resp_async_generator(
         content=new_messagee,
         created=int(time.time())
     ))
-    chat_dump = json.dumps([model.model_dump() for model in messages], indent=4)
+    chat_dump = json.dumps([model.model_dump() for model in messages])
     await db_manager.set_user_chat(user_id=user_id, chat_id=chat_id, new_chat_dump=chat_dump)
     
 

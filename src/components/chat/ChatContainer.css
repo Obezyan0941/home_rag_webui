@@ -35,6 +35,7 @@
 .message-container {
   display: flex;
   margin-bottom: 10px;
+  width: 100%;
 }
 
 .message-container:hover .message-button-option {
@@ -55,23 +56,77 @@
 }
 
 .message-options-container {
+  display: flex;
   flex-direction: row;
 }
 
 .message {
+  font-size: 1.2em;
   padding: 1px 20px;
   border-radius: 25px;
   color: #2c2c2c;
   background-color: #e5e5ea;
 }
 
+.message-form {
+  box-sizing: border-box;
+  padding: 8px 20px;
+  border-radius: 25px;
+  background-color: #e5e5ea;
+  display: flex;
+  width: 500px;
+  height: 40dvh;
+  align-items: stretch;
+
+  flex-direction: column;
+}
+
+.message-input {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  resize: none;
+  width: 100%;
+  
+  font: inherit;
+  font-size: 1.2em;
+  line-height: 1.4;
+  
+  flex: 1;
+  overflow-y: auto;
+
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  scrollbar-width: thin;
+  scrollbar-color: #888 var(--color-accent);
+}
+
 .message.user {
-  background-color: #d39314;
+  background-color: var(--color-accent);
   color: white;
 }
 
+.message-form.user {
+  background-color: var(--color-accent);
+  color: white;
+}
+
+.message-form.assistant {
+  background-color: rgba(255, 255, 255, 0);
+  color: rgba(255, 255, 255, 0);
+}
+
+.message-form.assistant .message-input {
+  scrollbar-color: #888 rgba(255, 255, 255, 0);
+}
+
 .message.assistant {
-  background-color: #e5e5ea;
+  background-color: #00000000;
+}
+
+.message-form.assistant {
+  background-color: #00000000;
 }
 
 .message.error {
@@ -127,7 +182,7 @@
   max-height: 45px;
   border: none;
   outline: none;
-  background-color: #d39314;
+  background-color: var(--color-accent);
   color: wheat;
   padding: 10px 20px;
   font-size: 16px;
@@ -141,7 +196,7 @@
   max-height: 45px;
   border: none;
   outline: none;
-  background-color: #d39314;
+  background-color: var(--color-accent);
   color: wheat;
   padding: 10px 20px;
   font-size: 16px;
@@ -151,7 +206,7 @@
 }
 
 .button:hover {
-  background-color: #f3aa18;
+  background-color: var(--color-accent-hover);
 }
 
 .button:disabled {
@@ -159,7 +214,7 @@
 }
 
 .button_stop:hover {
-  background-color: #f3aa18;
+  background-color: var(--color-accent-hover);
 }
 
 .button_stop:disabled {
@@ -211,12 +266,13 @@
 }
 
 .dark-theme .message.user {
-  background-color: #d39314;
+  background-color: var(--color-accent);
   color: white;
 }
 
 .dark-theme .message.assistant {
-  background-color: #e5e5ea;
+  color: var(--color-text);
+  background-color: #00000000;
 }
 
 .dark-theme .message.error {
@@ -234,11 +290,42 @@
   border-bottom-right-radius: 10px;
 }
 
-.dark-theme input {
+.dark-theme .chat-input {
   background-color: #333;
   color: white;
 }
 
 .dark-theme .message-button-option {
   color: #e5e5ea;
+}
+
+.message-form-buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.message-form .button_submit {
+  margin-left: 8px;
+  margin-right: 0px;
+  background-color: #e5e5ea;
+  color: #1a1a1a;
+  max-width: 80px;
+}
+
+.message-form .button_submit:hover {
+  background-color: #d6d6db;
+}
+
+
+.message-form .button_stop {
+  margin-left: 8px;
+  margin-right: 0px;
+  background-color: #1a1a1a;
+  color: #d6d6db;
+  max-width: 80px;
+}
+
+.message-form .button_stop:hover {
+  background-color: #292929;
 }

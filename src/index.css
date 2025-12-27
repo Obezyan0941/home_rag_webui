@@ -22,6 +22,8 @@
   /* accent colors */
   --color-primary: #eba415;
   --color-primary-hover: #f9bd47;
+  --color-accent: #d39314;
+  --color-accent-hover: #f3aa18;
   --color-success: #10b981;
   --color-error: #ef4444;
 

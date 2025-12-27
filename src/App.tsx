@@ -17,29 +17,15 @@ import { useAuthCheck } from './hooks/useAuthCheck';
 
 import type { SetChat } from './types/appStateTypes';
 import type { ChatDetails } from './types/appStateTypes';
-// const DEFAULT_CHATS: ChatDetails[] = [
-//   {
-//     chat_id: "123244",
-//     chat_name: "biba chat",
-//     created_at: "2025-12-10T15:30:45.123Z",
-//     last_message_at: Date.now().toString(),
-//     chat_dump: "bibaboba"
-//   },
-//   {
-//     chat_id: "234355",
-//     chat_name: "boba chat",
-//     created_at: "2025-12-10T15:30:45.123Z",
-//     last_message_at: Date.now().toString(),
-//     chat_dump: "bibaboba2"
-//   }
-// ];
+
 
 function appReducer(state: AppState, action: AppAction) {
   switch (action.type) {
     case "ADD_CHAT" : {
+      const new_chat = [action.payload, ...state.chat_list]
       return {
         ...state,
-        chat_list: [...state.chat_list, action.payload],
+        chat_list: new_chat,
       };    
     }
     case "REMOVE_CHAT" : {

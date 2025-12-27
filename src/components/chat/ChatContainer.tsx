@@ -51,8 +51,8 @@ function chatReducer(state: ChatState, action: ChatAction) {
     case "ADD_ASSISTANT_MESSAGE" : {
       const lastMessage = state.messages[state.messages.length - 1];
 
-      // if last message from assistant - assistant has already started replying, need to append token
-      if (lastMessage?.role !== 'assistant') {   
+      // if there is no assistant message - assistant just started replying, need to create one 
+      if (lastMessage?.role !== 'assistant') {  
         const assistantMessage: Message = {
           id: Math.round(Math.random() * Math.random() * 10000).toString(),
           role: 'assistant',
@@ -64,7 +64,7 @@ function chatReducer(state: ChatState, action: ChatAction) {
           messages: [...state.messages, assistantMessage],
           isError: false
         };
-      // if there is no assistant message - assistant just started replying, need to create one 
+      // if last message from assistant - assistant has already started replying, need to append token
       } else {
         return {
           ...state,
@@ -112,7 +112,43 @@ function chatReducer(state: ChatState, action: ChatAction) {
           }
         }
       }
-      console.error("Could not find message by id: " + action.payload.msg_id)
+      console.error("Could not find message by id: " + action.payload.msg_id);
+      return {...state}
+    }
+    case 'EDIT_MESSAGE' : {
+      const user_id = cookies.get(COOKIES.USER_ID);
+      if (typeof user_id !== "string") {
+        console.error("Could not get user id from cookies");
+        return {...state};
+      }      
+      for (let i = state.messages.length - 1; i >= 0; i--) {
+        if (state.messages[i].id === action.payload.msg_id) {
+          if (action.payload.role === "assistant") {
+            const new_messages = [...state.messages]
+            new_messages[i].content = action.payload.new_content
+            const chat_dump = JSON.stringify(new_messages);
+            SetChatRequest({user_id: user_id, chat_id: state.chat_id, chat_dump: chat_dump});
+            return {
+              ...state,
+              messages: new_messages,
+              isError: false
+            }
+          } else if (action.payload.role === "user") {
+            const new_messages = [...state.messages.slice(0, i + 1)]
+            console.log("new_messages")
+            console.log(new_messages)
+            new_messages[new_messages.length - 1].content = action.payload.new_content
+            return {  // no specific request to set chat needed - requests automatically if last message is from user
+              ...state,
+              messages: new_messages,
+              isError: false
+            }            
+          } else {
+            return {...state}
+          }
+        }
+      }
+      console.error("Could not find message by id: " + action.payload.msg_id);
       return {...state}
     }
     default: {

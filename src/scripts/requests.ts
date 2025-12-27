@@ -27,7 +27,7 @@ export async function fetchJson<TReq, TRes>(
   const timeoutId = setTimeout(() => controller.abort(), finalConfig.timeout);
 
   const headers: HeadersInit = {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json; charset=utf-8',
   };
 
   const requestOptions: RequestInit = {

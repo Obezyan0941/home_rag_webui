@@ -12,7 +12,7 @@ export async function OpenAIGenerateRequest(request: OpenAIRequestInterface): Pr
   const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json; charset=utf-8',
           ...(request.openai_api_key ? { 'Authorization': `Bearer ${request.openai_api_key}` } : {})
       },
       body: JSON.stringify(request.chat_completion_request),
@@ -66,7 +66,7 @@ export async function* OpenAIStreamRequest(
   const requestOptions: RequestInit = {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json; charset=utf-8',
           ...(request.openai_api_key ? { 'Authorization': `Bearer ${request.openai_api_key}` } : {})
       },
       body: JSON.stringify(request.chat_completion_request),

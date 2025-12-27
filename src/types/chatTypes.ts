@@ -38,9 +38,15 @@ export interface DeleteMessageAction {
   payload: { msg_id: string };
 }
 
+export interface EditMessageAction {
+  type: 'EDIT_MESSAGE';
+  payload: { msg_id: string, new_content: string, role: ChatMessageRole };
+}
+
 export type ChatAction = 
   | SetMessagesAction
   | AddUserMessageAction
   | AddAssistantMessageAction
   | AddErrorMessageAction
   | DeleteMessageAction
+  | EditMessageAction
