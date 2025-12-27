@@ -1,16 +1,13 @@
 services:
   homerag-webui:
     container_name: homerag-webui
-    build: .
     image: mchelenakinyesi/homerag-webui:latest
     environment:
-      - LLM_HOST=${LLM_HOST}
-      - MODEL_NAME=${MODEL_NAME}
+      - LLM_HOST=
+      - MODEL_NAME=
       - LLM_TOKEN=
-      - DEBUG=false
     ports:
       - "1024:1024"
     volumes:
       - ./data:/app/data
-      - ./backend_app:/app/backend_app
     restart: unless-stopped
